@@ -184,7 +184,7 @@ window.__require = function e(t, n, r) {
           _this.ips[index].setEditorAction(paramName, defaultValues[index], action);
         });
       };
-      InputePropertys.prototype.setSliderActions = function(titleName, paramName, defaultValues, min, max, actions) {
+      InputePropertys.prototype.setSliderActions = function(titleName, paramName, defaultValues, actions, min, max) {
         var _this = this;
         this.title.string = titleName;
         this.ips.forEach(function(ip) {
@@ -193,7 +193,7 @@ window.__require = function e(t, n, r) {
         actions.forEach(function(action, index) {
           _this.ips[index].node.active = true;
           _this.ips[index].setEditorAction(paramName, defaultValues[index], action);
-          _this.ips[index].setSliderAction(paramName, defaultValues[index], min, max, action);
+          _this.ips[index].setSliderAction(paramName, defaultValues[index], action, min, max);
         });
       };
       __decorate([ property(cc.Label) ], InputePropertys.prototype, "title", void 0);
@@ -266,13 +266,13 @@ window.__require = function e(t, n, r) {
         event.handler = "doToggleAction";
         this.toggle.clickEvents = [ event ];
       };
-      InputeProperty.prototype.setSliderAction = function(paramName, defaultValues, min, max, action) {
+      InputeProperty.prototype.setSliderAction = function(paramName, defaultValues, action, min, max) {
         this.paramName = paramName;
         this.sliderAction = action;
         this.editorAction = action;
         this.min = min;
         this.max = max;
-        this.slider.progress = defaultValues / (max - min);
+        this.slider.progress = (defaultValues - min) / (max - min);
         var event = new cc.Component.EventHandler();
         event.target = this.node;
         event.component = "InputeProperty";
@@ -979,6 +979,7 @@ window.__require = function e(t, n, r) {
       SHADER_LIST[SHADER_LIST["ShaderRipple"] = 29] = "ShaderRipple";
     })(SHADER_LIST = exports.SHADER_LIST || (exports.SHADER_LIST = {}));
     var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple" ];
+    var BLEND_FACTOR = [ cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
     var ShaderDemo = function(_super) {
       __extends(ShaderDemo, _super);
       function ShaderDemo() {
@@ -997,6 +998,8 @@ window.__require = function e(t, n, r) {
         _this.oldSpriteNode = null;
         _this.propertyParent = null;
         _this.bg = null;
+        _this.settingNode = null;
+        _this.showHideLabel = null;
         _this.params = [];
         return _this;
       }
@@ -1104,14 +1107,7 @@ window.__require = function e(t, n, r) {
         var _this = this;
         this.propertyParent.destroyAllChildren();
         this.oldSpriteNode.setContentSize(600, 600);
-        var propertyPrefab = cc.instantiate(this.params[2]);
-        propertyPrefab.setParent(this.propertyParent);
-        var inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-        inputePropertys.setSliderActions("SpriteSize", "SpriteSize", [ this.oldSpriteNode.getContentSize().width, this.oldSpriteNode.getContentSize().height ], 0, 1920, [ function(name, data) {
-          _this.oldSpriteNode.width = Number(data);
-        }, function(name, data) {
-          _this.oldSpriteNode.height = Number(data);
-        } ]);
+        this.genNodeProperty();
         var m = this.currentShaderComponent.getMaterial();
         if (!m) {
           this.scheduleOnce(this.showProperty);
@@ -1120,6 +1116,68 @@ window.__require = function e(t, n, r) {
         this.currentShaderComponent.shaderFunc.params.forEach(function(param) {
           _this.ignoreParam(param.name) || _this.genProperty(param);
         });
+      };
+      ShaderDemo.prototype.genNodeProperty = function() {
+        var _this = this;
+        var propertyPrefab0 = cc.instantiate(this.params[2]);
+        propertyPrefab0.setParent(this.propertyParent);
+        var inputePropertys0 = propertyPrefab0.getComponent(InputePropertys_1.default);
+        inputePropertys0.setSliderActions("SpritePos", "SpritePos", [ this.oldSpriteNode.x, this.oldSpriteNode.y ], [ function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.x = n;
+        }, function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.y = n;
+        } ], -960, 960);
+        var propertyPrefab1 = cc.instantiate(this.params[2]);
+        propertyPrefab1.setParent(this.propertyParent);
+        var inputePropertys1 = propertyPrefab1.getComponent(InputePropertys_1.default);
+        inputePropertys1.setSliderActions("SpriteSize", "SpriteSize", [ this.oldSpriteNode.getContentSize().width, this.oldSpriteNode.getContentSize().height ], [ function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.width = n;
+        }, function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.height = n;
+        } ], 0, 1920);
+        var propertyPrefab2 = cc.instantiate(this.params[2]);
+        propertyPrefab2.setParent(this.propertyParent);
+        var inputePropertys2 = propertyPrefab2.getComponent(InputePropertys_1.default);
+        inputePropertys2.setSliderActions("SpriteSkew", "SpriteSkew", [ this.oldSpriteNode.skewX, this.oldSpriteNode.skewY ], [ function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.skewX = n;
+        }, function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          _this.oldSpriteNode.skewY = n;
+        } ], -90, 90);
+        var s = this.oldSpriteNode.getComponent(cc.Sprite);
+        s.srcBlendFactor = cc.macro.BlendFactor.SRC_ALPHA;
+        s.dstBlendFactor = cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA;
+        var srcIndex = BLEND_FACTOR.indexOf(cc.macro.BlendFactor.SRC_ALPHA);
+        var propertyPrefab3 = cc.instantiate(this.params[2]);
+        propertyPrefab3.setParent(this.propertyParent);
+        var inputePropertys3 = propertyPrefab3.getComponent(InputePropertys_1.default);
+        inputePropertys3.setSliderActions("SrcBlendFactor", "SrcBlendFactor", [ srcIndex ], [ function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          var s = _this.oldSpriteNode.getComponent(cc.Sprite);
+          s.srcBlendFactor = BLEND_FACTOR[n];
+        } ], 0, BLEND_FACTOR.length - 1);
+        var dstIndex = BLEND_FACTOR.indexOf(cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA);
+        var propertyPrefab4 = cc.instantiate(this.params[2]);
+        propertyPrefab4.setParent(this.propertyParent);
+        var inputePropertys4 = propertyPrefab4.getComponent(InputePropertys_1.default);
+        inputePropertys4.setSliderActions("DstBlendFactor", "DstBlendFactor", [ dstIndex ], [ function(name, data) {
+          var n = Number(data);
+          if (isNaN(n)) return;
+          var s = _this.oldSpriteNode.getComponent(cc.Sprite);
+          s.dstBlendFactor = BLEND_FACTOR[n];
+        } ], 0, BLEND_FACTOR.length - 1);
       };
       ShaderDemo.prototype.isBoolean = function(name) {
         switch (name) {
@@ -1166,7 +1224,7 @@ window.__require = function e(t, n, r) {
             propertyPrefab = cc.instantiate(this.params[2]);
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], 0, 255, [ genPropertyAction(m, param.type, 0, param.paramType) ]);
+            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], [ genPropertyAction(m, param.type, 0, param.paramType) ], 0, 255);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1189,7 +1247,7 @@ window.__require = function e(t, n, r) {
             propertyPrefab = cc.instantiate(this.params[2]);
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ isColor ? Math.floor(255 * d.x) : d.x, isColor ? Math.floor(255 * d.y) : d.y, isColor ? Math.floor(255 * d.z) : d.z ], 0, 255, [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType) ]);
+            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ isColor ? Math.floor(255 * d.x) : d.x, isColor ? Math.floor(255 * d.y) : d.y, isColor ? Math.floor(255 * d.z) : d.z ], [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType) ], 0, 255);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1204,7 +1262,7 @@ window.__require = function e(t, n, r) {
             propertyPrefab = cc.instantiate(this.params[2]);
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ isColor ? Math.floor(255 * d.x) : d.x, isColor ? Math.floor(255 * d.y) : d.y, isColor ? Math.floor(255 * d.z) : d.z, isColor ? Math.floor(255 * d.w) : d.w ], 0, 255, [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType), genPropertyAction(m, param.type, 3, param.paramType) ]);
+            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ isColor ? Math.floor(255 * d.x) : d.x, isColor ? Math.floor(255 * d.y) : d.y, isColor ? Math.floor(255 * d.z) : d.z, isColor ? Math.floor(255 * d.w) : d.w ], [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType), genPropertyAction(m, param.type, 3, param.paramType) ], 0, 255);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1225,7 +1283,7 @@ window.__require = function e(t, n, r) {
             propertyPrefab = cc.instantiate(this.params[2]);
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], 0, 255, [ genPropertyAction(m, param.type, 0, param.paramType) ]);
+            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], [ genPropertyAction(m, param.type, 0, param.paramType) ], 0, 255);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1238,10 +1296,34 @@ window.__require = function e(t, n, r) {
         var _this = this;
         var obj = [];
         obj.push({
+          name: "SpritePosion",
+          value: {
+            width: this.oldSpriteNode.x,
+            height: this.oldSpriteNode.y
+          }
+        });
+        obj.push({
           name: "SpriteSize",
           value: {
             width: this.oldSpriteNode.width,
             height: this.oldSpriteNode.height
+          }
+        });
+        var s = this.oldSpriteNode.getComponent(cc.Sprite);
+        s.srcBlendFactor = cc.macro.BlendFactor.SRC_ALPHA;
+        s.dstBlendFactor = cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA;
+        obj.push({
+          name: "SpriteSkew",
+          value: {
+            width: this.oldSpriteNode.skewX,
+            height: this.oldSpriteNode.skewY
+          }
+        });
+        obj.push({
+          name: "SpriteBlend",
+          value: {
+            src: BLEND_FACTOR.indexOf(s.srcBlendFactor),
+            dst: BLEND_FACTOR.indexOf(s.dstBlendFactor)
           }
         });
         var m = this.currentShaderComponent.getMaterial();
@@ -1256,6 +1338,10 @@ window.__require = function e(t, n, r) {
         });
         obj.length && downloadObjectAsJson(obj, SHADER_NAME[this.currentShader]);
       };
+      ShaderDemo.prototype.toggleSetting = function() {
+        this.settingNode.active = !this.settingNode.active;
+        this.showHideLabel.string = this.settingNode.active ? "HIDE" : "SHOW";
+      };
       __decorate([ property({
         type: cc.Enum(SHADER_LIST)
       }) ], ShaderDemo.prototype, "currentShader", void 0);
@@ -1268,6 +1354,8 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Node) ], ShaderDemo.prototype, "mask", void 0);
       __decorate([ property(cc.Node) ], ShaderDemo.prototype, "propertyParent", void 0);
       __decorate([ property(cc.Sprite) ], ShaderDemo.prototype, "bg", void 0);
+      __decorate([ property(cc.Node) ], ShaderDemo.prototype, "settingNode", void 0);
+      __decorate([ property(cc.Label) ], ShaderDemo.prototype, "showHideLabel", void 0);
       __decorate([ property([ cc.Node ]) ], ShaderDemo.prototype, "params", void 0);
       ShaderDemo = __decorate([ ccclass ], ShaderDemo);
       return ShaderDemo;
