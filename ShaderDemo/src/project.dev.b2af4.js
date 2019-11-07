@@ -280,6 +280,9 @@ window.__require = function e(t, n, r) {
         this.slider.slideEvents = [ event ];
       };
       InputeProperty.prototype.doEditorAction = function() {
+        var n = Number(this.editor.string);
+        if (isNaN(n)) return;
+        this.slider && (this.slider.progress = (n - this.min) / (this.max - this.min));
         this.editorAction(this.paramName, this.editor.string);
       };
       InputeProperty.prototype.doToggleAction = function() {
