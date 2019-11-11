@@ -579,7 +579,9 @@ window.__require = function e(t, n, r) {
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
         name: "clearColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
       } ],
       vert: MVP_1.MVP,
       frag: "\n\n\n        varying vec2 v_uv0;\n        uniform vec4 uvfix;\n        uniform float time;\n        uniform int count;\n        uniform float centerSize;\n        uniform float size;\n        uniform float speed;\n        uniform vec4 glowColor;\n        uniform int clearColor;\n\n        vec2 bigger(in vec2 uv){\n            return (uvfix.xy - uvfix.zw) * uv;\n        }\n\n\n        float snoise(vec3 uv, float res)\n        {\n            const vec3 s = vec3(1e0, 1e2, 1e3);\n\n            uv *= res;\n\n            vec3 uv0 = floor(mod(uv, res))*s;\n            vec3 uv1 = floor(mod(uv+vec3(1.), res))*s;\n\n            vec3 f = fract(uv);\n            f = f*f*(3.0-2.0*f);\n\n            vec4 v = vec4(uv0.x+uv0.y+uv0.z, uv1.x+uv0.y+uv0.z,\n                        uv0.x+uv1.y+uv0.z, uv1.x+uv1.y+uv0.z);\n\n            vec4 r = fract(sin(v*1e-1)*1e3);\n            float r0 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);\n\n            r = fract(sin((v + uv1.z - uv0.z)*1e-1)*1e3);\n            float r1 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);\n\n            return mix(r0, r1, f.z)*2.-1.;\n        }\n\n        void main( )\n        {\n            vec2 uv = bigger(v_uv0.xy);\n            uv.y = 1. - uv.y;\n            //\u7f6e\u4e2d\n            uv = uv-vec2(0.5,0.5);\n\n            float color = centerSize - (size*length(2.*uv));\n\n            vec3 coord = vec3(atan(uv.x,uv.y)/6.2832+0.5, length(uv)*speed, .5);\n\n\n            for(int i = 1; i <= 10; i++)\n            {\n                if(i>count){\n                    break;\n                }\n                float power = pow(2.0, float(i));\n                color += (1.5 / power) * snoise(coord + vec3(0.,-time*.05, time*.01), power*16.);\n            }\n            vec4 tempColor = vec4( color, pow(max(color,0.),2.), pow(max(color,0.),3.), 1.0)*glowColor;\n            float alpha = 0.;\n            if(clearColor == 1){\n                alpha = tempColor.r;\n            } else if(clearColor == 2){\n                alpha = tempColor.g;\n            } else if(clearColor == 3){\n                alpha = tempColor.b;\n            } else if(clearColor == 4){\n                alpha = tempColor.r*tempColor.g;\n            } else if(clearColor == 5){\n                alpha = tempColor.r*tempColor.b;\n            } else if(clearColor == 6){\n                alpha = tempColor.g*tempColor.b;\n            } else if(clearColor == 7){\n                alpha = tempColor.r*tempColor.g*tempColor.b;\n            }\n            gl_FragColor = vec4(tempColor.rgb,alpha*glowColor.a);\n        }"
@@ -980,8 +982,9 @@ window.__require = function e(t, n, r) {
       SHADER_LIST[SHADER_LIST["ShaderWave"] = 27] = "ShaderWave";
       SHADER_LIST[SHADER_LIST["ShaderGaussBlur"] = 28] = "ShaderGaussBlur";
       SHADER_LIST[SHADER_LIST["ShaderRipple"] = 29] = "ShaderRipple";
+      SHADER_LIST[SHADER_LIST["ShaderGalaxy"] = 30] = "ShaderGalaxy";
     })(SHADER_LIST = exports.SHADER_LIST || (exports.SHADER_LIST = {}));
-    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple" ];
+    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy" ];
     var BLEND_FACTOR = [ cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
     var ShaderDemo = function(_super) {
       __extends(ShaderDemo, _super);
@@ -1008,6 +1011,7 @@ window.__require = function e(t, n, r) {
       }
       ShaderDemo.prototype.start = function() {
         var _this = this;
+        cc.view.enableRetina(false);
         this.propertyParent.removeAllChildren(false);
         this.spriteTemplate.removeFromParent();
         cc.dynamicAtlasManager.enabled = false;
@@ -1182,24 +1186,6 @@ window.__require = function e(t, n, r) {
           s.dstBlendFactor = BLEND_FACTOR[n];
         } ], 0, BLEND_FACTOR.length - 1);
       };
-      ShaderDemo.prototype.isBoolean = function(name) {
-        switch (name) {
-         case "useTextureAlpha":
-         case "isClockwise":
-         case "xUseAbs":
-         case "yUseAbs":
-         case "xUseExp":
-         case "yUseExp":
-         case "reverse":
-         case "useSymmetry":
-         case "useRandomShape":
-         case "useTextureColor":
-          return true;
-
-         default:
-          return false;
-        }
-      };
       ShaderDemo.prototype.ignoreParam = function(name) {
         switch (name.toLowerCase()) {
          case "time":
@@ -1228,6 +1214,11 @@ window.__require = function e(t, n, r) {
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
             inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], [ genPropertyAction(m, param.type, 0, param.paramType) ], 0, 255);
+          } else if (null != param.min && null != param.max) {
+            propertyPrefab = cc.instantiate(this.params[2]);
+            propertyPrefab.setParent(this.propertyParent);
+            inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
+            inputePropertys.setSliderActions(param.name, param.name, [ d ], [ genPropertyAction(m, param.type, 0, param.paramType) ], param.min, param.max);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1251,6 +1242,11 @@ window.__require = function e(t, n, r) {
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
             inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ isColor ? Math.floor(255 * d.x) : d.x, isColor ? Math.floor(255 * d.y) : d.y, isColor ? Math.floor(255 * d.z) : d.z ], [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType) ], 0, 255);
+          } else if (null != param.min && null != param.max) {
+            propertyPrefab = cc.instantiate(this.params[2]);
+            propertyPrefab.setParent(this.propertyParent);
+            inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
+            inputePropertys.setSliderActions(param.name, param.name, [ d.x, d.y, d.z ], [ genPropertyAction(m, param.type, 0, param.paramType), genPropertyAction(m, param.type, 1, param.paramType), genPropertyAction(m, param.type, 2, param.paramType) ], param.min, param.max);
           } else {
             propertyPrefab = cc.instantiate(this.params[0]);
             propertyPrefab.setParent(this.propertyParent);
@@ -1275,24 +1271,31 @@ window.__require = function e(t, n, r) {
           break;
 
          case ShaderFunc_1.RENDERER_PARAMS.PARAM_INT:
-          if (this.isBoolean(param.name)) {
+          if (param.paramType === ShaderFunc_1.PARAM_TYPES.BOOLEAN) {
             propertyPrefab = cc.instantiate(this.params[1]);
             propertyPrefab.setParent(this.propertyParent);
             inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
             inputePropertys.setToggleActions(param.name, param.name, [ d ], [ genPropertyAction(m, param.type, 0, param.paramType) ]);
             break;
           }
-          if (isColor) {
-            propertyPrefab = cc.instantiate(this.params[2]);
-            propertyPrefab.setParent(this.propertyParent);
-            inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], [ genPropertyAction(m, param.type, 0, param.paramType) ], 0, 255);
-          } else {
-            propertyPrefab = cc.instantiate(this.params[0]);
-            propertyPrefab.setParent(this.propertyParent);
-            inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
-            inputePropertys.setEditorActions(param.name, param.name, [ d ], [ genPropertyAction(m, param.type, 0, param.paramType) ]);
+          if (null == param.min || null == param.max) {
+            if (isColor) {
+              propertyPrefab = cc.instantiate(this.params[2]);
+              propertyPrefab.setParent(this.propertyParent);
+              inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
+              inputePropertys.setSliderActions(param.name + "\ud83c\udf08", param.name, [ Math.floor(255 * d) ], [ genPropertyAction(m, param.type, 0, param.paramType) ], 0, 255);
+            } else {
+              propertyPrefab = cc.instantiate(this.params[0]);
+              propertyPrefab.setParent(this.propertyParent);
+              inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
+              inputePropertys.setEditorActions(param.name, param.name, [ d ], [ genPropertyAction(m, param.type, 0, param.paramType) ]);
+            }
+            break;
           }
+          propertyPrefab = cc.instantiate(this.params[2]);
+          propertyPrefab.setParent(this.propertyParent);
+          inputePropertys = propertyPrefab.getComponent(InputePropertys_1.default);
+          inputePropertys.setSliderActions(param.name, param.name, [ d ], [ genPropertyAction(m, param.type, 0, param.paramType) ], param.min, param.max);
         }
       };
       ShaderDemo.prototype.download = function() {
@@ -1333,9 +1336,14 @@ window.__require = function e(t, n, r) {
         this.currentShaderComponent.shaderFunc.params.forEach(function(param) {
           if (!_this.ignoreParam(param.name)) {
             var paramValue = m.getParamValue(param.name);
-            obj.push({
+            param.type === ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT3 || param.type === ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4 ? obj.push({
               name: param.name,
-              value: param.paramType && param.paramType === ShaderFunc_1.PARAM_TYPES.COLOR ? Math.floor(255 * paramValue) : paramValue
+              value: param.paramType && param.paramType === ShaderFunc_1.PARAM_TYPES.COLOR ? fixValue(paramValue, function(value) {
+                return 255 * value;
+              }) : paramValue
+            }) : obj.push({
+              name: param.name,
+              value: paramValue
             });
           }
         });
@@ -1364,6 +1372,14 @@ window.__require = function e(t, n, r) {
       return ShaderDemo;
     }(cc.Component);
     exports.default = ShaderDemo;
+    function fixValue(valueObject, func) {
+      var values = [ "x", "y", "z", "w" ];
+      var value = {};
+      values.forEach(function(a, index) {
+        valueObject[values[index]] && (value[values[index]] = func(valueObject[values[index]]));
+      });
+      return value;
+    }
     function genPropertyAction(m, type, index, paramType) {
       return function(name, data) {
         var n = Number(data);
@@ -1625,10 +1641,13 @@ window.__require = function e(t, n, r) {
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
         name: "clearColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
       }, {
         name: "useTextureAlpha",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
       } ],
       vert: MVP_1.MVP,
       frag: "\n        uniform sampler2D texture;\n        uniform vec4 uvfix;\n        uniform vec2 resolution;\n        uniform float time;\n        uniform float speed;\n        uniform float detal;\n        uniform vec4 glowColor;\n        uniform int clearColor;\n        uniform int useTextureAlpha;\n        varying vec2 v_uv0;\n\n        vec2 bigger(in vec2 uv){\n            return (uvfix.xy - uvfix.zw) * uv;\n        }\n\n        vec2 rand2(in vec2 p)\n        {\n            return fract(vec2(sin(p.x * 591.32 + p.y * 154.077), cos(p.x * 391.32 + p.y * 49.077)));\n        }\n\n        float voronoi(in vec2 x)\n        {\n            vec2 p = floor(x);\n            vec2 f = fract(x);\n            float minDistance = 1.;\n\n            for(int j = -1; j <= 1; j ++)\n            {\n                for(int i = -1; i <= 1; i ++)\n                {\n                    vec2 b = vec2(i, j);\n                    vec2 rand = .5 + .5 * sin(time*speed * 3. + 12. * rand2(p + b));\n                    vec2 r = vec2(b) - f + rand;\n                    minDistance = min(minDistance, length(r));\n                }\n            }\n            return minDistance;\n        }\n\n        void main()\n        {\n\n            vec2 uv = bigger(v_uv0);\n            uv.y = 2. - uv.y;\n            float val = pow(voronoi(uv * 8.) * 1.25, 7.) * 2.;\n            float gridLineThickness = detal / uv.y;\n            vec2 grid = step(mod(uv, .1), vec2(gridLineThickness));\n\n            vec4 tempColor = glowColor*vec4(val * (grid.x + grid.y),val * (grid.x + grid.y),val * (grid.x + grid.y),1.0);\n            float alpha = 0.;\n            if(clearColor == 1){\n                alpha = tempColor.r;\n            } else if(clearColor == 2){\n                alpha = tempColor.g;\n            } else if(clearColor == 3){\n                alpha = tempColor.b;\n            } else if(clearColor == 4){\n                alpha = tempColor.r*tempColor.g;\n            } else if(clearColor == 5){\n                alpha = tempColor.r*tempColor.b;\n            } else if(clearColor == 6){\n                alpha = tempColor.g*tempColor.b;\n            } else if(clearColor == 7){\n                alpha = tempColor.r*tempColor.g*tempColor.b;\n            }\n            vec4 t = texture2D(texture, v_uv0);\n            if(useTextureAlpha == 1){\n                gl_FragColor = vec4(tempColor.rgb,alpha*t.a);\n            } else {\n                gl_FragColor = vec4(tempColor.rgb,alpha);\n            }\n\n        }\n        "
@@ -1740,7 +1759,9 @@ window.__require = function e(t, n, r) {
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
         name: "clearColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
       }, {
         name: "size",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
@@ -2595,6 +2616,190 @@ window.__require = function e(t, n, r) {
     exports.Param = Param;
     cc._RF.pop();
   }, {} ],
+  ShaderGalaxy: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "1cfb4Txy/hOnaBe/OXntXk6", "ShaderGalaxy");
+    "use strict";
+    var __extends = this && this.__extends || function() {
+      var extendStatics = Object.setPrototypeOf || {
+        __proto__: []
+      } instanceof Array && function(d, b) {
+        d.__proto__ = b;
+      } || function(d, b) {
+        for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+      };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype = null === b ? Object.create(b) : (__.prototype = b.prototype, new __());
+      };
+    }();
+    var __decorate = this && this.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : null === desc ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if ("object" === typeof Reflect && "function" === typeof Reflect.decorate) r = Reflect.decorate(decorators, target, key, desc); else for (var i = decorators.length - 1; i >= 0; i--) (d = decorators[i]) && (r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r);
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var MVP_1 = require("../MVP");
+    var ShaderComponent_1 = require("../ShaderComponent");
+    var ShaderFunc_1 = require("../ShaderFunc");
+    var ShaderManager_1 = require("../ShaderManager");
+    var shader = {
+      name: "ShaderGalaxy",
+      params: [ {
+        name: "iResolution",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT2
+      }, {
+        name: "time",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "uvfix",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4
+      }, {
+        name: "isReverse",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
+      }, {
+        name: "isStill",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
+      }, {
+        name: "isMix",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
+      }, {
+        name: "showCore",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
+      }, {
+        name: "showAround",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
+      }, {
+        name: "size",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 1,
+        max: 200
+      }, {
+        name: "armDensity",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT3,
+        min: 1,
+        max: 200
+      }, {
+        name: "speed",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "addBlock",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 0,
+        max: 200
+      }, {
+        name: "galaxyColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT3,
+        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
+      } ],
+      defines: [],
+      vert: MVP_1.MVP,
+      frag: "\n\n        // Shader Toy\n        // https://www.shadertoy.com/view/MdXSzS\n        // The Big Bang - just a small explosion somewhere in a massive Galaxy of Universes.\n        // Outside of this there's a massive galaxy of 'Galaxy of Universes'... etc etc. :D\n\n\n        uniform sampler2D texture;\n        uniform vec2    iResolution;\n        uniform float   time;\n        uniform vec4    uvfix;\n        varying vec2    v_uv0;\n\n        uniform int     isReverse;\n        uniform int     isStill;\n        uniform int     isMix;\n        uniform int     showCore;\n        uniform int     showAround;\n        uniform float   speed;\n        uniform float   size;\n        uniform float   addBlock;\n        uniform vec3    armDensity;\n        uniform vec3    galaxyColor;\n\n        vec2 bigger(in vec2 uv){\n            // return (uvfix.xy - uvfix.zw) * uv;\n            return uvfix.xy * uv + uvfix.zw;\n        }\n\n        vec2 smaller(in vec2 uv){\n            //return uv / uvfix.xy - uvfix.zw;\n            return (uv - uvfix.zw) / uvfix.xy;\n\n        }\n\n        void main(){\n            vec2 uv = v_uv0;\n            uv = uv * 2.0 - 1.0;\n            uv /= size;\n            float t = time * speed + ((.25 + .05 * sin(time * .1))/(length(uv.xy) + .07)) * 2.2;\n\n            if(isStill == 1){\n                t = 0.0;\n            }\n\n            float si = sin(t);\n            float co = cos(t);\n\n            if(isReverse == 1){\n                si *= -1.0;\n            }\n\n            mat2 ma = mat2(co, si, -si, co);\n\n            float vR, vG, vB;\n            vR = vG = vB = 0.0;\n\n            float s = 0.0;\n            for (int i = 0; i < 90; i++){\n                vec3 p = s * vec3(uv, 0.0);\n                p.xy *= ma;\n                p += vec3(.22, .3, s - 1.5 - sin(time * .13) * .1);\n\n                for (int i = 0; i < 8; i++){\n                    p = abs(p) / dot(p,p) - 0.659;\n                }\n\n                // vR += length(p.xy*10.) * .0003;\n                // vG += dot(p,p) * .0015 * (1.8 + sin(length(uv.xy * 13.0) + .5  - time * .2));\n                // vB += dot(p,p) * .0013 * (1.5 + sin(length(uv.xy * 14.5) + 1.2 - time * .3));\n\n                vR += length(p.xy*10.) * (armDensity.x/1e5);\n                vG += dot(p,p) * (armDensity.y/1e5) * (1.8 + sin(length(uv.xy * 13.0) + .5  - time * .2));\n                vB += dot(p,p) * (armDensity.z/1e5) * (1.5 + sin(length(uv.xy * 14.5) + 1.2 - time * .3));\n                s  += .035;\n            }\n\n            float length = length(uv);\n\n            if(showAround == 0){\n                vR *= smoothstep(.9, .0, length);\n                vG *= smoothstep(.7, .0, length);\n                vB *= smoothstep(.5, .0, length);\n            }\n\n            vec3 color = vec3(vR,vG,vB);\n            if(isMix == 1){\n                color = vec3(vR * (1.5 + sin(time * .2) * .4),(vG + vR) * .3,vB);\n            }\n\n            if(showCore == 1){\n                color += smoothstep(0.2, .0, length) * .85 + smoothstep(.0, .6, vR) * .3;\n            }\n\n            vec3 newCol = min(pow(abs(color), vec3(1.2)), 1.0);\n            // newCol *= galaxyColor;\n            float newA = newCol[0] + newCol[1] + newCol[2];\n\n            //newCol *= 2.;\n            newA *= addBlock;\n\n\t\t\tnewCol = newCol * galaxyColor;\n            gl_FragColor=vec4(newCol ,newA);\n        }\n\n\n        "
+    };
+    ShaderManager_1.shaderManager.addShader(shader);
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var ShaderGalaxy = function(_super) {
+      __extends(ShaderGalaxy, _super);
+      function ShaderGalaxy() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.shaderFunc = shader;
+        _this.isReverse = false;
+        _this.isStill = false;
+        _this.isMix = true;
+        _this.showCore = true;
+        _this.showAround = false;
+        _this.armDensity = new cc.Vec3(3e-4 * 1e5, 150, 130);
+        _this.speed = .1;
+        _this.size = 1;
+        _this.addBlock = 3;
+        _this.galaxyColor = cc.color(255, 255, 255);
+        _this.time = 0;
+        return _this;
+      }
+      ShaderGalaxy.prototype.doStart = function(sprite, material, dt) {
+        var iResolution = cc.v2(sprite.node.getContentSize().width, sprite.node.getContentSize().height);
+        var uvfix = ShaderComponent_1.getUVfix(sprite.spriteFrame);
+        this.time = 10;
+        material.setParamValue("iResolution", iResolution);
+        material.setParamValue("uvfix", uvfix);
+        material.setParamValue("time", this.time);
+        material.setParamValue("isReverse", this.isReverse ? 1 : 0);
+        material.setParamValue("isStill", this.isStill ? 1 : 0);
+        material.setParamValue("isMix", this.isMix ? 1 : 0);
+        material.setParamValue("showCore", this.showCore ? 1 : 0);
+        material.setParamValue("showAround", this.showAround ? 1 : 0);
+        material.setParamValue("speed", this.speed);
+        material.setParamValue("size", this.size);
+        material.setParamValue("addBlock", this.addBlock);
+        material.setParamValue("armDensity", {
+          x: this.armDensity.x,
+          y: this.armDensity.y,
+          z: this.armDensity.z
+        });
+        material.setParamValue("galaxyColor", {
+          x: this.galaxyColor.getR() / 255,
+          y: this.galaxyColor.getG() / 255,
+          z: this.galaxyColor.getB() / 255
+        });
+      };
+      ShaderGalaxy.prototype.doUpdate = function(sprite, material, dt) {
+        if (!this.isStill) {
+          this.time += dt;
+          material.setParamValue("time", this.time);
+        }
+      };
+      __decorate([ property({
+        tooltip: "\u53cd\u8f49"
+      }) ], ShaderGalaxy.prototype, "isReverse", void 0);
+      __decorate([ property({
+        tooltip: "\u975c\u6b62"
+      }) ], ShaderGalaxy.prototype, "isStill", void 0);
+      __decorate([ property({
+        tooltip: "\u6df7\u8272"
+      }) ], ShaderGalaxy.prototype, "isMix", void 0);
+      __decorate([ property({
+        tooltip: "\u986f\u793a\u9280\u5fc3"
+      }) ], ShaderGalaxy.prototype, "showCore", void 0);
+      __decorate([ property({
+        tooltip: "\u986f\u793a\u5468\u570d"
+      }) ], ShaderGalaxy.prototype, "showAround", void 0);
+      __decorate([ property({
+        tooltip: "\u65cb\u81c2\u5bc6\u5ea6"
+      }) ], ShaderGalaxy.prototype, "armDensity", void 0);
+      __decorate([ property({
+        type: cc.Float,
+        tooltip: "\u65cb\u8f49\u901f\u7387"
+      }) ], ShaderGalaxy.prototype, "speed", void 0);
+      __decorate([ property({
+        type: cc.Float,
+        tooltip: "\u5c3a\u5bf8"
+      }) ], ShaderGalaxy.prototype, "size", void 0);
+      __decorate([ property({
+        type: cc.Float,
+        tooltip: "\u52a0\u9ed1"
+      }) ], ShaderGalaxy.prototype, "addBlock", void 0);
+      __decorate([ property(cc.Color) ], ShaderGalaxy.prototype, "galaxyColor", void 0);
+      ShaderGalaxy = __decorate([ ccclass ], ShaderGalaxy);
+      return ShaderGalaxy;
+    }(ShaderComponent_1.default);
+    exports.default = ShaderGalaxy;
+    cc._RF.pop();
+  }, {
+    "../MVP": "MVP",
+    "../ShaderComponent": "ShaderComponent",
+    "../ShaderFunc": "ShaderFunc",
+    "../ShaderManager": "ShaderManager"
+  } ],
   ShaderGaussBlur: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "88028X6Tl9Pco5Bqj+QGVOG", "ShaderGaussBlur");
@@ -3211,7 +3416,9 @@ window.__require = function e(t, n, r) {
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
       }, {
         name: "clearColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
       }, {
         name: "cScale",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
@@ -3332,7 +3539,9 @@ window.__require = function e(t, n, r) {
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
         name: "clearColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
       }, {
         name: "cScale",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
@@ -3767,7 +3976,7 @@ window.__require = function e(t, n, r) {
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT2
       } ],
       vert: MVP_1.MVP,
-      frag: "\n\t#ifdef GL_ES\n\tprecision mediump float;\n\t#endif\n\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform float speed;\n\tuniform vec4 uvfix;\n\n\tvarying vec2 v_uv0;\n\n\tvec2 bigger(in vec2 uv){\n\t\treturn uvfix.xy * uv + uvfix.zw;\n\t}\n\n\tvec2 smaller(in vec2 uv){\n\t\treturn (uv - uvfix.zw) / uvfix.xy;\n\t}\n\n\t#define PI 3.1415927\n\t#define TWO_PI 6.283185\n\n\t#define ANIMATION_SPEED 1.5\n\t#define MOVEMENT_SPEED 1.0\n\t#define MOVEMENT_DIRECTION vec2(0.7, -1.0)\n\n\t#define PARTICLE_SIZE 0.009\n\n\t#define PARTICLE_SCALE (vec2(0.5, 1.6))\n\t#define PARTICLE_SCALE_VAR (vec2(0.25, 0.2))\n\n\t#define PARTICLE_BLOOM_SCALE (vec2(0.5, 0.8))\n\t#define PARTICLE_BLOOM_SCALE_VAR (vec2(0.3, 0.1))\n\n\t#define SPARK_COLOR vec3(1.0, 0.4, 0.05) * 1.5\n\t#define BLOOM_COLOR vec3(1.0, 0.4, 0.05) * 0.8\n\t#define SMOKE_COLOR vec3(1.0, 0.43, 0.1) * 0.8\n\n\t#define SIZE_MOD 1.05\n\t#define ALPHA_MOD 0.9\n\t#define LAYERS_COUNT 15\n\t#define LAYERS_NOISE1_COUNT 6\n\t#define LAYERS_NOISE2_COUNT 3\n\n\tfloat hash1_2(in vec2 x)\n\t{\n\t\treturn fract(sin(dot(x, vec2(52.127, 61.2871))) * 521.582);\n\t}\n\n\tvec2 hash2_2(in vec2 x)\n\t{\n\t\treturn fract(sin(x * mat2(20.52, 24.1994, 70.291, 80.171)) * 492.194);\n\t}\n\n\t//Simple interpolated noise\n\tvec2 noise2_2(vec2 uv)\n\t{\n\t\t//vec2 f = fract(uv);\n\t\tvec2 f = smoothstep(0.0, 1.0, fract(uv));\n\n\t\tvec2 uv00 = floor(uv);\n\t\tvec2 uv01 = uv00 + vec2(0,1);\n\t\tvec2 uv10 = uv00 + vec2(1,0);\n\t\tvec2 uv11 = uv00 + 1.0;\n\t\tvec2 v00 = hash2_2(uv00);\n\t\tvec2 v01 = hash2_2(uv01);\n\t\tvec2 v10 = hash2_2(uv10);\n\t\tvec2 v11 = hash2_2(uv11);\n\n\t\tvec2 v0 = mix(v00, v01, f.y);\n\t\tvec2 v1 = mix(v10, v11, f.y);\n\t\tvec2 v = mix(v0, v1, f.x);\n\n\t\treturn v;\n\t}\n\n\t//Simple interpolated noise\n\tfloat noise1_2(in vec2 uv)\n\t{\n\t\tvec2 f = fract(uv);\n\t\t//vec2 f = smoothstep(0.0, 1.0, fract(uv));\n\n\t\tvec2 uv00 = floor(uv);\n\t\tvec2 uv01 = uv00 + vec2(0,1);\n\t\tvec2 uv10 = uv00 + vec2(1,0);\n\t\tvec2 uv11 = uv00 + 1.0;\n\n\t\tfloat v00 = hash1_2(uv00);\n\t\tfloat v01 = hash1_2(uv01);\n\t\tfloat v10 = hash1_2(uv10);\n\t\tfloat v11 = hash1_2(uv11);\n\n\t\tfloat v0 = mix(v00, v01, f.y);\n\t\tfloat v1 = mix(v10, v11, f.y);\n\t\tfloat v = mix(v0, v1, f.x);\n\n\t\treturn v;\n\t}\n\n\tfloat layeredNoise1(in vec2 uv, in float sizeMod, in float alphaMod, in float animation)\n\t{\n\t\tfloat noise = 0.0;\n\t\tfloat alpha = 1.0;\n\t\tfloat size = 1.0;\n\t\tvec2 offset;\n\t\tfor (int i = 0; i < LAYERS_NOISE1_COUNT; i++)\n\t\t{\n\t\t\toffset += hash2_2(vec2(alpha, size)) * 10.0;\n\n\t\t\t//Adding noise with movement\n\t\t\tnoise += noise1_2(uv * size + time*speed * animation * 8.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED + offset) * alpha;\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\tnoise *= (1.0 - alphaMod)/(1.0 - pow(alphaMod, float(LAYERS_NOISE1_COUNT)));\n\t\treturn noise;\n\t}\n\n\n\tfloat layeredNoise2(in vec2 uv, in float sizeMod, in float alphaMod, in float animation)\n\t{\n\t\tfloat noise = 0.0;\n\t\tfloat alpha = 1.0;\n\t\tfloat size = 1.0;\n\t\tvec2 offset;\n\t\tfor (int i = 0; i < LAYERS_NOISE2_COUNT; i++)\n\t\t{\n\t\t\toffset += hash2_2(vec2(alpha, size)) * 10.0;\n\n\t\t\t//Adding noise with movement\n\t\t\tnoise += noise1_2(uv * size + time*speed * animation * 8.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED + offset) * alpha;\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\tnoise *= (1.0 - alphaMod)/(1.0 - pow(alphaMod, float(LAYERS_NOISE2_COUNT)));\n\t\treturn noise;\n\t}\n\n\t//Rotates point around 0,0\n\tvec2 rotate(in vec2 point, in float deg)\n\t{\n\t\tfloat s = sin(deg);\n\t\tfloat c = cos(deg);\n\t\treturn mat2(s, c, -c, s) * point;\n\t}\n\n\t//Cell center from point on the grid\n\tvec2 voronoiPointFromRoot(in vec2 root, in float deg)\n\t{\n\t\tvec2 point = hash2_2(root) - 0.5;\n\t\tfloat s = sin(deg);\n\t\tfloat c = cos(deg);\n\t\tpoint = mat2(s, c, -c, s) * point * 0.66;\n\t\tpoint += root + 0.5;\n\t\treturn point;\n\t}\n\n\t//Voronoi cell point rotation degrees\n\tfloat degFromRootUV(in vec2 uv)\n\t{\n\t\treturn time*speed * ANIMATION_SPEED * (hash1_2(uv) - 0.5) * 2.0;\n\t}\n\n\tvec2 randomAround2_2(in vec2 point, in vec2 range, in vec2 uv)\n\t{\n\t\treturn point + (hash2_2(uv) - 0.5) * range;\n\t}\n\n\n\tvec3 fireParticles(in vec2 uv, in vec2 originalUV)\n\t{\n\t\tvec3 particles = vec3(0.0);\n\t\tvec2 rootUV = floor(uv);\n\t\tfloat deg = degFromRootUV(rootUV);\n\t\tvec2 pointUV = voronoiPointFromRoot(rootUV, deg);\n\t\tfloat dist = 2.0;\n\t\tfloat distBloom = 0.0;\n\n\t\t//UV manipulation for the faster particle movement\n\t\tvec2 tempUV = uv + (noise2_2(uv * 2.0) - 0.5) * 0.1;\n\t\ttempUV += -(noise2_2(uv * 3.0 + time*speed) - 0.5) * 0.07;\n\n\t\t//Sparks sdf\n\t\tdist = length(rotate(tempUV - pointUV, 0.7) * randomAround2_2(PARTICLE_SCALE, PARTICLE_SCALE_VAR, rootUV));\n\n\t\t//Bloom sdf\n\t\tdistBloom = length(rotate(tempUV - pointUV, 0.7) * randomAround2_2(PARTICLE_BLOOM_SCALE, PARTICLE_BLOOM_SCALE_VAR, rootUV));\n\n\t\t//Add sparks\n\t\tparticles += (1.0 - smoothstep(PARTICLE_SIZE * 0.6, PARTICLE_SIZE * 3.0, dist)) * SPARK_COLOR;\n\n\t\t//Add bloom\n\t\tparticles += pow((1.0 - smoothstep(0.0, PARTICLE_SIZE * 6.0, distBloom)) * 1.0, 3.0) * BLOOM_COLOR;\n\n\t\t//Upper disappear curve randomization\n\t\tfloat border = (hash1_2(rootUV) - 0.5) * 2.0;\n\t\tfloat disappear = 1.0 - smoothstep(border, border + 0.5, originalUV.y);\n\n\t\t//Lower appear curve randomization\n\t\tborder = (hash1_2(rootUV + 0.214) - 1.8) * 0.7;\n\t\tfloat appear = smoothstep(border, border + 0.4, originalUV.y);\n\n\t\treturn particles * disappear * appear;\n\t}\n\n\n\t//Layering particles to imitate 3D view\n\tvec3 layeredParticles(in vec2 uv, in float sizeMod, in float alphaMod, in float smoke)\n\t{\n\t\tvec3 particles = vec3(0);\n\t\tfloat size = 1.0;\n\t\tfloat alpha = 1.0;\n\t\tvec2 offset = vec2(0.0);\n\t\tvec2 noiseOffset;\n\t\tvec2 bokehUV;\n\n\t\tfor (int i = 0; i < LAYERS_COUNT; i++)\n\t\t{\n\t\t\t//Particle noise movement\n\t\t\tnoiseOffset = (noise2_2(uv * size * 2.0 + 0.5) - 0.5) * 0.15;\n\n\t\t\t//UV with applied movement\n\t\t\tbokehUV = (uv * size + time*speed * MOVEMENT_DIRECTION * MOVEMENT_SPEED) + offset + noiseOffset;\n\n\t\t\t//Adding particles\t\t\t\t\t\t\t\tif there is more smoke, remove smaller particles\n\t\t\tparticles += fireParticles(bokehUV, uv) * alpha * (1.0 - smoothstep(0.0, 1.0, smoke) * (float(i) / float(LAYERS_COUNT)));\n\n\t\t\t//Moving uv origin to avoid generating the same particles\n\t\t\toffset += hash2_2(vec2(alpha, alpha)) * 10.0;\n\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\treturn particles;\n\t}\n\n\tvoid main(void)\n\t{\n\t\t// vec2 uv = (gl_FragCoord.xy - resolution.xy) / resolution.x;\n\t\tvec2 fragCoord = vec2(v_uv0.x, 1.- v_uv0.y) * resolution;\n\t\tvec2 uv = (fragCoord.xy - resolution.xy) / resolution.x;\n\n\t\tfloat vignette = 1.0 - smoothstep(0.4, 1.4, length(uv + vec2(0.0, 0.3)));\n\n\t\tuv *= 1.8;\n\n\t\tfloat smokeIntensity = layeredNoise1(uv * 10.0 + time*speed * 4.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED, 1.7, 0.7, 0.2);\n\t\tsmokeIntensity *= pow(1.0 - smoothstep(-1.0, 1.6, uv.y), 2.0);\n\t\tvec3 smoke = smokeIntensity * SMOKE_COLOR * 0.8 * vignette;\n\n\t\t//Cutting holes in smoke\n\t\tsmoke *= pow(layeredNoise2(uv * 4.0 + time*speed * 0.5 * MOVEMENT_DIRECTION * MOVEMENT_SPEED, 1.8, 0.5, 0.2), 2.0) * 1.5;\n\n\t\tvec3 particles = layeredParticles(uv, SIZE_MOD, ALPHA_MOD, smokeIntensity);\n\n\t\tvec3 col = particles + smoke + SMOKE_COLOR * 0.02;\n\t\tcol *= vignette;\n\n\t\tcol = smoothstep(-0.08, 1.0, col);\n\n\t\tgl_FragColor = vec4(col, col.r);\n\t}\n\t"
+      frag: "\n\t#ifdef GL_ES\n\tprecision mediump float;\n\t#endif\n\n\tuniform vec2 resolution;\n\tuniform float time;\n\tuniform float speed;\n\tuniform vec4 uvfix;\n\n\tvarying vec2 v_uv0;\n\n\tvec2 bigger(in vec2 uv){\n\t\treturn uvfix.xy * uv + uvfix.zw;\n\t}\n\n\tvec2 smaller(in vec2 uv){\n\t\treturn (uv - uvfix.zw) / uvfix.xy;\n\t}\n\n\t#define PI 3.1415927\n\t#define TWO_PI 6.283185\n\n\t#define ANIMATION_SPEED 1.5\n\t#define MOVEMENT_SPEED 1.0\n\t#define MOVEMENT_DIRECTION vec2(0.7, -1.0)\n\n\t#define PARTICLE_SIZE 0.005\n\n\t#define PARTICLE_SCALE (vec2(0.5, 1.6))\n\t#define PARTICLE_SCALE_VAR (vec2(0.25, 0.2))\n\n\t#define PARTICLE_BLOOM_SCALE (vec2(0.5, 0.8))\n\t#define PARTICLE_BLOOM_SCALE_VAR (vec2(0.3, 0.1))\n\n\t#define SPARK_COLOR vec3(1.0, 0.4, 0.05) * 1.5\n\t#define BLOOM_COLOR vec3(1.0, 0.4, 0.05) * 0.8\n\t#define SMOKE_COLOR vec3(1.0, 0.43, 0.1) * 0.8\n\n\t#define SIZE_MOD 1.05\n\t#define ALPHA_MOD 0.9\n\t#define LAYERS_COUNT 2\n\t#define LAYERS_NOISE1_COUNT 4\n\t#define LAYERS_NOISE2_COUNT 3\n\n\tfloat hash1_2(in vec2 x)\n\t{\n\t\treturn fract(sin(dot(x, vec2(52.127, 61.2871))) * 521.582);\n\t}\n\n\tvec2 hash2_2(in vec2 x)\n\t{\n\t\treturn fract(sin(x * mat2(20.52, 24.1994, 70.291, 80.171)) * 492.194);\n\t}\n\n\t//Simple interpolated noise\n\tvec2 noise2_2(vec2 uv)\n\t{\n\t\t//vec2 f = fract(uv);\n\t\tvec2 f = smoothstep(0.0, 1.0, fract(uv));\n\n\t\tvec2 uv00 = floor(uv);\n\t\tvec2 uv01 = uv00 + vec2(0,1);\n\t\tvec2 uv10 = uv00 + vec2(1,0);\n\t\tvec2 uv11 = uv00 + 1.0;\n\t\tvec2 v00 = hash2_2(uv00);\n\t\tvec2 v01 = hash2_2(uv01);\n\t\tvec2 v10 = hash2_2(uv10);\n\t\tvec2 v11 = hash2_2(uv11);\n\n\t\tvec2 v0 = mix(v00, v01, f.y);\n\t\tvec2 v1 = mix(v10, v11, f.y);\n\t\tvec2 v = mix(v0, v1, f.x);\n\n\t\treturn v;\n\t}\n\n\t//Simple interpolated noise\n\tfloat noise1_2(in vec2 uv)\n\t{\n\t\tvec2 f = fract(uv);\n\t\t//vec2 f = smoothstep(0.0, 1.0, fract(uv));\n\n\t\tvec2 uv00 = floor(uv);\n\t\tvec2 uv01 = uv00 + vec2(0,1);\n\t\tvec2 uv10 = uv00 + vec2(1,0);\n\t\tvec2 uv11 = uv00 + 1.0;\n\n\t\tfloat v00 = hash1_2(uv00);\n\t\tfloat v01 = hash1_2(uv01);\n\t\tfloat v10 = hash1_2(uv10);\n\t\tfloat v11 = hash1_2(uv11);\n\n\t\tfloat v0 = mix(v00, v01, f.y);\n\t\tfloat v1 = mix(v10, v11, f.y);\n\t\tfloat v = mix(v0, v1, f.x);\n\n\t\treturn v;\n\t}\n\n\tfloat layeredNoise1(in vec2 uv, in float sizeMod, in float alphaMod, in float animation)\n\t{\n\t\tfloat noise = 0.0;\n\t\tfloat alpha = 1.0;\n\t\tfloat size = 1.0;\n\t\tvec2 offset;\n\t\tfor (int i = 0; i < LAYERS_NOISE1_COUNT; i++)\n\t\t{\n\t\t\toffset += hash2_2(vec2(alpha, size)) * 10.0;\n\n\t\t\t//Adding noise with movement\n\t\t\tnoise += noise1_2(uv * size + time*speed * animation * 8.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED + offset) * alpha;\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\tnoise *= (1.0 - alphaMod)/(1.0 - pow(alphaMod, float(LAYERS_NOISE1_COUNT)));\n\t\treturn noise;\n\t}\n\n\n\tfloat layeredNoise2(in vec2 uv, in float sizeMod, in float alphaMod, in float animation)\n\t{\n\t\tfloat noise = 0.0;\n\t\tfloat alpha = 1.0;\n\t\tfloat size = 1.0;\n\t\tvec2 offset;\n\t\tfor (int i = 0; i < LAYERS_NOISE2_COUNT; i++)\n\t\t{\n\t\t\toffset += hash2_2(vec2(alpha, size)) * 10.0;\n\n\t\t\t//Adding noise with movement\n\t\t\tnoise += noise1_2(uv * size + time*speed * animation * 8.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED + offset) * alpha;\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\tnoise *= (1.0 - alphaMod)/(1.0 - pow(alphaMod, float(LAYERS_NOISE2_COUNT)));\n\t\treturn noise;\n\t}\n\n\t//Rotates point around 0,0\n\tvec2 rotate(in vec2 point, in float deg)\n\t{\n\t\tfloat s = sin(deg);\n\t\tfloat c = cos(deg);\n\t\treturn mat2(s, c, -c, s) * point;\n\t}\n\n\t//Cell center from point on the grid\n\tvec2 voronoiPointFromRoot(in vec2 root, in float deg)\n\t{\n\t\tvec2 point = hash2_2(root) - 0.5;\n\t\tfloat s = sin(deg);\n\t\tfloat c = cos(deg);\n\t\tpoint = mat2(s, c, -c, s) * point * 0.66;\n\t\tpoint += root + 0.5;\n\t\treturn point;\n\t}\n\n\t//Voronoi cell point rotation degrees\n\tfloat degFromRootUV(in vec2 uv)\n\t{\n\t\treturn time*speed * ANIMATION_SPEED * (hash1_2(uv) - 0.5) * 2.0;\n\t}\n\n\tvec2 randomAround2_2(in vec2 point, in vec2 range, in vec2 uv)\n\t{\n\t\treturn point + (hash2_2(uv) - 0.5) * range;\n\t}\n\n\n\tvec3 fireParticles(in vec2 uv, in vec2 originalUV)\n\t{\n\t\tvec3 particles = vec3(0.0);\n\t\tvec2 rootUV = floor(uv);\n\t\tfloat deg = degFromRootUV(rootUV);\n\t\tvec2 pointUV = voronoiPointFromRoot(rootUV, deg);\n\t\tfloat dist = 2.0;\n\t\tfloat distBloom = 0.0;\n\n\t\t//UV manipulation for the faster particle movement\n\t\tvec2 tempUV = uv + (noise2_2(uv * 2.0) - 0.5) * 0.1;\n\t\ttempUV += -(noise2_2(uv * 3.0 + time*speed) - 0.5) * 0.07;\n\n\t\t//Sparks sdf\n\t\tdist = length(rotate(tempUV - pointUV, 0.7) * randomAround2_2(PARTICLE_SCALE, PARTICLE_SCALE_VAR, rootUV));\n\n\t\t//Bloom sdf\n\t\t//distBloom = length(rotate(tempUV - pointUV, 0.7) * randomAround2_2(PARTICLE_BLOOM_SCALE, PARTICLE_BLOOM_SCALE_VAR, rootUV));\n\n\t\t//Add sparks\n\t\tparticles += (1.0 - smoothstep(PARTICLE_SIZE * 0.6, PARTICLE_SIZE * 3.0, dist)) * SPARK_COLOR;\n\n\t\t//Add bloom\n\t\t//particles += pow((1.0 - smoothstep(0.0, PARTICLE_SIZE * 6.0, distBloom)) * 1.0, 3.0) * BLOOM_COLOR;\n\n\t\t//Upper disappear curve randomization\n\t\tfloat border = (hash1_2(rootUV) - 0.5) * 2.0;\n\t\tfloat disappear = 1.0 - smoothstep(border, border + 0.5, originalUV.y);\n\n\t\t//Lower appear curve randomization\n\t\tborder = (hash1_2(rootUV + 0.214) - 1.8) * 0.7;\n\t\tfloat appear = smoothstep(border, border + 0.4, originalUV.y);\n\n\t\treturn particles * disappear * appear;\n\t}\n\n\n\t//Layering particles to imitate 3D view\n\tvec3 layeredParticles(in vec2 uv, in float sizeMod, in float alphaMod, in float smoke)\n\t{\n\t\tvec3 particles = vec3(0);\n\t\tfloat size = 1.0;\n\t\tfloat alpha = 1.0;\n\t\tvec2 offset = vec2(0.0);\n\t\tvec2 noiseOffset;\n\t\tvec2 bokehUV;\n\n\t\tfor (int i = 0; i < LAYERS_COUNT; i++)\n\t\t{\n\t\t\t//Particle noise movement\n\t\t\tnoiseOffset = (noise2_2(uv * size * 2.0 + 0.5) - 0.5) * 0.15;\n\n\t\t\t//UV with applied movement\n\t\t\tbokehUV = (uv * size + time*speed * MOVEMENT_DIRECTION * MOVEMENT_SPEED) + offset + noiseOffset;\n\n\t\t\t//Adding particles\t\t\t\t\t\t\t\tif there is more smoke, remove smaller particles\n\t\t\tparticles += fireParticles(bokehUV, uv) * alpha * (1.0 - smoothstep(0.0, 1.0, smoke) * (float(i) / float(LAYERS_COUNT)));\n\n\t\t\t//Moving uv origin to avoid generating the same particles\n\t\t\toffset += hash2_2(vec2(alpha, alpha)) * 10.0;\n\n\t\t\talpha *= alphaMod;\n\t\t\tsize *= sizeMod;\n\t\t}\n\n\t\treturn particles;\n\t}\n\n\tvoid main(void)\n\t{\n\t\t// vec2 uv = (gl_FragCoord.xy - resolution.xy) / resolution.x;\n\t\tvec2 fragCoord = vec2(v_uv0.x, 1.- v_uv0.y) * resolution;\n\t\tvec2 uv = (fragCoord.xy - resolution.xy) / resolution.x;\n\n\t\tfloat vignette = 1.0 - smoothstep(0.4, 1.4, length(uv + vec2(0.0, 0.3)));\n\n\t\tuv *= 1.8;\n\n\t\tfloat smokeIntensity = layeredNoise1(uv * 10.0 + time*speed * 4.0 * MOVEMENT_DIRECTION * MOVEMENT_SPEED, 1.7, 0.7, 0.2);\n\t\tsmokeIntensity *= pow(1.0 - smoothstep(-1.0, 1.6, uv.y), 2.0);\n\t\tvec3 smoke = smokeIntensity * SMOKE_COLOR * 0.8 * vignette;\n\n\t\t//Cutting holes in smoke\n\t\tsmoke *= pow(layeredNoise2(uv * 4.0 + time*speed * 0.5 * MOVEMENT_DIRECTION * MOVEMENT_SPEED, 1.8, 0.5, 0.2), 2.0) * 1.5;\n\n\t\tvec3 particles = layeredParticles(uv, SIZE_MOD, ALPHA_MOD, smokeIntensity);\n\n\t\tvec3 col = particles + smoke + SMOKE_COLOR * 0.02;\n\t\tcol *= vignette;\n\n\t\tcol = smoothstep(-0.08, 1.0, col);\n\n\t\tgl_FragColor = vec4(col, col.r);\n\t}\n\t"
     };
     ShaderManager_1.shaderManager.addShader(shader);
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
@@ -3854,16 +4063,20 @@ window.__require = function e(t, n, r) {
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4
       }, {
         name: "reverse",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
       }, {
         name: "useRandomShape",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
       }, {
         name: "useTextureColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
       }, {
         name: "useSymmetry",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        paramType: ShaderFunc_1.PARAM_TYPES.BOOLEAN
       }, {
         name: "leftValue",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
@@ -4414,4 +4627,4 @@ window.__require = function e(t, n, r) {
     "../ShaderFunc": "ShaderFunc",
     "../ShaderManager": "ShaderManager"
   } ]
-}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);
+}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGalaxy", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);

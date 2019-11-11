@@ -154,6 +154,15 @@ window._CCSettings = {
                 "ShaderFluxay2/1.png",
                 "cc.Texture2D"
             ],
+            a1cmmROABDL6UjXjub1DUi: [
+                "ShaderGalaxy/1",
+                "cc.SpriteFrame",
+                1
+            ],
+            f9Z38opCVBFbfh8ebb0tw4: [
+                "ShaderGalaxy/1.png",
+                "cc.Texture2D"
+            ],
             "3ev6Vd1GBB04TwyASMGndA": [
                 "ShaderGaussBlur/1",
                 "cc.SpriteFrame",
@@ -315,7 +324,7 @@ window._CCSettings = {
             "f0BIwQ8D5Ml7nTNQbh1YlS",
             "ffDpHHVcZAhqOfy25Fe4w7"
         ],
-        "0be308a90": [
+        "0e74c7445": [
             "02kcE0s9pAmLe145ftvpR/",
             "14lJtg+ZlEuZbU55rkpXNY",
             "18DGpTVnlAo7rLWlm/kRNA",
@@ -359,6 +368,7 @@ window._CCSettings = {
             "ed0hW5J5ZKBar1gflskoHO",
             "f4WRuswbhGb631yvdmeY2C",
             "f4z0Hfr3xByrKYkJN8nK+1",
+            "f9Z38opCVBFbfh8ebb0tw4",
             "fb9u3fsT5IP7/O3P4xwSOz"
         ]
     },
@@ -368,8 +378,8 @@ window._CCSettings = {
             "8e5f5",
             "07ac9ec85",
             "c004e",
-            "0be308a90",
-            "33050",
+            "0e74c7445",
+            "3d6a5",
             "10dml3DttAWrpPAstjQP/R",
             "1e252",
             "15i3Zr3YdBWKEutZSObKne",
@@ -414,6 +424,8 @@ window._CCSettings = {
             "5aa3d",
             "a0SwaemUFI4q374f3/oaqx",
             "04c40",
+            "a1cmmROABDL6UjXjub1DUi",
+            "6aecc",
             "aeTzNsHMFKYrURRNBpP4zC",
             "dd1b2",
             "b0HdSgCj5NEI5QM9mWldc1",
@@ -517,6 +529,8 @@ window._CCSettings = {
             "f4WRuswbhGb631yvdmeY2C",
             "1f54f",
             "f4z0Hfr3xByrKYkJN8nK+1",
+            "f9f40",
+            "f9Z38opCVBFbfh8ebb0tw4",
             "f9f40",
             "fb9u3fsT5IP7/O3P4xwSOz",
             "f9f40"
