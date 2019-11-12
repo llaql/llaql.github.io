@@ -948,6 +948,7 @@ window.__require = function e(t, n, r) {
       value: true
     });
     var ShaderFunc_1 = require("../submodule/shader/script/ShaderFunc");
+    var InputeProperty_1 = require("./InputeProperty");
     var InputePropertys_1 = require("./InputePropertys");
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
     var SHADER_LIST;
@@ -983,8 +984,9 @@ window.__require = function e(t, n, r) {
       SHADER_LIST[SHADER_LIST["ShaderGaussBlur"] = 28] = "ShaderGaussBlur";
       SHADER_LIST[SHADER_LIST["ShaderRipple"] = 29] = "ShaderRipple";
       SHADER_LIST[SHADER_LIST["ShaderGalaxy"] = 30] = "ShaderGalaxy";
+      SHADER_LIST[SHADER_LIST["ShaderEdgeGlow"] = 31] = "ShaderEdgeGlow";
     })(SHADER_LIST = exports.SHADER_LIST || (exports.SHADER_LIST = {}));
-    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy" ];
+    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy", "ShaderEdgeGlow" ];
     var BLEND_FACTOR = [ cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
     var ShaderDemo = function(_super) {
       __extends(ShaderDemo, _super);
@@ -1122,6 +1124,12 @@ window.__require = function e(t, n, r) {
         }
         this.currentShaderComponent.shaderFunc.params.forEach(function(param) {
           _this.ignoreParam(param.name) || _this.genProperty(param);
+        });
+        var touchMove = this.oldSpriteNode.addComponent("TouchMove");
+        this.scheduleOnce(function() {
+          var xIP = _this.propertyParent.children[0].children[1].getComponent(InputeProperty_1.default);
+          var yIP = _this.propertyParent.children[0].children[2].getComponent(InputeProperty_1.default);
+          touchMove.setInputePropertyRef(xIP, yIP);
         });
       };
       ShaderDemo.prototype.genNodeProperty = function() {
@@ -1489,6 +1497,7 @@ window.__require = function e(t, n, r) {
     cc._RF.pop();
   }, {
     "../submodule/shader/script/ShaderFunc": "ShaderFunc",
+    "./InputeProperty": "InputeProperty",
     "./InputePropertys": "InputePropertys"
   } ],
   ShaderDissolve2: [ function(require, module, exports) {
@@ -1582,6 +1591,126 @@ window.__require = function e(t, n, r) {
       return ShaderDissolve2;
     }(ShaderComponent_1.default);
     exports.default = ShaderDissolve2;
+    cc._RF.pop();
+  }, {
+    "../MVP": "MVP",
+    "../ShaderComponent": "ShaderComponent",
+    "../ShaderFunc": "ShaderFunc",
+    "../ShaderManager": "ShaderManager"
+  } ],
+  ShaderEdgeGlow: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "c1bf4YMA7dDh5RFnuL61wDg", "ShaderEdgeGlow");
+    "use strict";
+    var __extends = this && this.__extends || function() {
+      var extendStatics = Object.setPrototypeOf || {
+        __proto__: []
+      } instanceof Array && function(d, b) {
+        d.__proto__ = b;
+      } || function(d, b) {
+        for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+      };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype = null === b ? Object.create(b) : (__.prototype = b.prototype, new __());
+      };
+    }();
+    var __decorate = this && this.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : null === desc ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if ("object" === typeof Reflect && "function" === typeof Reflect.decorate) r = Reflect.decorate(decorators, target, key, desc); else for (var i = decorators.length - 1; i >= 0; i--) (d = decorators[i]) && (r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r);
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var MVP_1 = require("../MVP");
+    var ShaderComponent_1 = require("../ShaderComponent");
+    var ShaderFunc_1 = require("../ShaderFunc");
+    var ShaderManager_1 = require("../ShaderManager");
+    var shader = {
+      name: "ShaderEdgeGlow",
+      params: [ {
+        name: "iResolution",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT2
+      }, {
+        name: "time",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "uvfix",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4
+      }, {
+        name: "frequency",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 0,
+        max: 50
+      }, {
+        name: "thickness",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 0,
+        max: 30
+      }, {
+        name: "luma",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT3,
+        min: 0,
+        max: 1e5
+      }, {
+        name: "edgeColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT3,
+        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
+      } ],
+      defines: [],
+      vert: MVP_1.MVP,
+      frag: "\n\n        // Shader Toy\n        // https://www.shadertoy.com/view/Mdf3zr\n\n        uniform sampler2D texture;\n        uniform vec2    iResolution;\n        uniform float   time;\n        uniform vec4    uvfix;\n        varying vec2    v_uv0;\n\n        uniform float   frequency;\n        uniform float   thickness;\n        uniform vec3    luma;\n        uniform vec3    edgeColor;\n\n\n        vec2 bigger(in vec2 uv){\n            // return (uvfix.xy - uvfix.zw) * uv;\n            return uvfix.xy * uv + uvfix.zw;\n        }\n\n        vec2 smaller(in vec2 uv){\n            //return uv / uvfix.xy - uvfix.zw;\n            return (uv - uvfix.zw) / uvfix.xy;\n\n        }\n\n        float d;\n        float lookup(vec2 p, float dx, float dy)\n        {\n            vec2 uv = (p.xy + vec2(dx * d, dy * d)) / iResolution.xy;\n            vec4 c = texture2D(texture, uv.xy);\n\n            // return as luma\n            return luma.x/1e5 * c.r + luma.y/1e5 * c.g + luma.z/1e5 * c.b;\n        }\n\n        void main() {\n            if(frequency != 0.0){\n                d = thickness * sin(time * frequency); // kernel offset\n            }else {\n                d = thickness;\n            }\n\n\n            vec2 p = v_uv0;\n            p *= iResolution;\n\n            //math : simple sobel operator edge detection\n            float gx = 0.0;\n            gx += -1.0 * lookup(p, -1.0, -1.0);\n            gx += -2.0 * lookup(p, -1.0,  0.0);\n            gx += -1.0 * lookup(p, -1.0,  1.0);\n            gx +=  1.0 * lookup(p,  1.0, -1.0);\n            gx +=  2.0 * lookup(p,  1.0,  0.0);\n            gx +=  1.0 * lookup(p,  1.0,  1.0);\n\n            float gy = 0.0;\n            gy += -1.0 * lookup(p, -1.0, -1.0);\n            gy += -2.0 * lookup(p,  0.0, -1.0);\n            gy += -1.0 * lookup(p,  1.0, -1.0);\n            gy +=  1.0 * lookup(p, -1.0,  1.0);\n            gy +=  2.0 * lookup(p,  0.0,  1.0);\n            gy +=  1.0 * lookup(p,  1.0,  1.0);\n\n            // hack: use g^2 to conceal noise in the video\n            float g = gx*gx + gy*gy;\n            float g2 = g * (sin(time) / 2.0 + 0.5);\n\n            vec4 col = texture2D(texture, p / iResolution.xy);\n            col += vec4( edgeColor.r * g ,edgeColor.g * g , edgeColor.b * g , 0.0);\n\n            gl_FragColor = col;\n        }\n\n\n        "
+    };
+    ShaderManager_1.shaderManager.addShader(shader);
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var ShaderEdgeGlow = function(_super) {
+      __extends(ShaderEdgeGlow, _super);
+      function ShaderEdgeGlow() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.shaderFunc = shader;
+        _this.frequency = 3;
+        _this.thickness = 2.5;
+        _this.luma = new cc.Vec3(.29126 * 1e5, 71520, 7220);
+        _this.edgeColor = cc.color(205, 40, 0);
+        _this.time = 0;
+        return _this;
+      }
+      ShaderEdgeGlow.prototype.doStart = function(sprite, material, dt) {
+        var iResolution = cc.v2(sprite.node.getContentSize().width, sprite.node.getContentSize().height);
+        var uvfix = ShaderComponent_1.getUVfix(sprite.spriteFrame);
+        this.time = 10;
+        material.setParamValue("iResolution", iResolution);
+        material.setParamValue("uvfix", uvfix);
+        material.setParamValue("time", this.time);
+        material.setParamValue("frequency", this.frequency);
+        material.setParamValue("thickness", this.thickness);
+        material.setParamValue("luma", {
+          x: this.luma.x,
+          y: this.luma.y,
+          z: this.luma.z
+        });
+        material.setParamValue("edgeColor", {
+          x: this.edgeColor.getR() / 255,
+          y: this.edgeColor.getG() / 255,
+          z: this.edgeColor.getB() / 255
+        });
+      };
+      ShaderEdgeGlow.prototype.doUpdate = function(sprite, material, dt) {
+        this.time += dt;
+        material.setParamValue("time", this.time);
+      };
+      __decorate([ property(cc.Float) ], ShaderEdgeGlow.prototype, "frequency", void 0);
+      __decorate([ property(cc.Float) ], ShaderEdgeGlow.prototype, "thickness", void 0);
+      __decorate([ property(cc.Vec3) ], ShaderEdgeGlow.prototype, "luma", void 0);
+      __decorate([ property(cc.Color) ], ShaderEdgeGlow.prototype, "edgeColor", void 0);
+      ShaderEdgeGlow = __decorate([ ccclass ], ShaderEdgeGlow);
+      return ShaderEdgeGlow;
+    }(ShaderComponent_1.default);
+    exports.default = ShaderEdgeGlow;
     cc._RF.pop();
   }, {
     "../MVP": "MVP",
@@ -3319,7 +3448,7 @@ window.__require = function e(t, n, r) {
         _this.shaderFunc = shader;
         _this.speed = 4;
         _this.turbulence = 50;
-        _this.strength = .01;
+        _this.strength = .1;
         _this.time = 0;
         return _this;
       }
@@ -4087,36 +4216,12 @@ window.__require = function e(t, n, r) {
         name: "baseValue",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
       }, {
-        name: "textureRColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        name: "textureColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4,
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
-        name: "textureGColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "textureBColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "textureAColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "shapeRColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "shapeGColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "shapeBColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
-        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
-      }, {
-        name: "shapeAColor",
-        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        name: "shapeColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4,
         paramType: ShaderFunc_1.PARAM_TYPES.COLOR
       }, {
         name: "duration",
@@ -4130,7 +4235,7 @@ window.__require = function e(t, n, r) {
       } ],
       defines: [],
       vert: MVP_1.MVP,
-      frag: "\n        uniform sampler2D texture;\n        uniform vec4 uvfix;\n        uniform vec2 iResolution;\n        varying vec2 v_uv0;\n\n        uniform int reverse;\n        uniform int useSymmetry;\n        uniform int useRandomShape;\n        uniform int useTextureColor;\n        uniform float leftValue;\n        uniform float rightValue;\n        uniform float baseValue;\n        uniform float textureRColor;\n        uniform float textureGColor;\n        uniform float textureBColor;\n        uniform float textureAColor;\n\n        uniform float shapeRColor;\n        uniform float shapeGColor;\n        uniform float shapeBColor;\n        uniform float shapeAColor;\n        uniform float time;\n        uniform float speed;\n        uniform float duration;\n        uniform float diffusionSpeed;\n        uniform float extent;\n\n        // #define pattern sin(1.5)\n\n        // #define pattern sin(1.+fract(.7971*floor(iTime/2.)))\n        // #define extent 7.2\n\n        // thanks to FabriceNeyret2\n        // from dgreensp => https://www.shadertoy.com/view/4ljGDd\n\n\n\n        float magicBox(vec3 p,float pattern)\n        {\n            vec3 uvw = p;\n            p = 1.0 - abs(1. - mod(uvw, 2.0));\n            float lL = length(p), nL = lL, tot = 0.0, c = pattern;\n            for (int i=0; i < 13; i++) {\n                p = abs(p)/(lL*lL) - c;\n                nL = length(p);\n                tot += abs(nL-lL);\n                lL = nL;\n            }\n            return tot;\n        }\n\n        vec2 bigger(in vec2 uv){\n            return uvfix.xy * uv + uvfix.zw;\n        }\n\n        void main(){\n            vec2 uv = bigger(v_uv0);\n            uv.y = 1.0 - uv.y;\n            uv = uv * 5.0 - 2.5;\n\n\n\n            float a = 0.;\n            if(useSymmetry==1){\n                if (uv.x >= 0.) a = rightValue - atan(uv.x, uv.y);\n                if (uv.x < 0.) a =  leftValue - atan(-uv.x, uv.y);\n            }else{\n                if (uv.x >= 0.) a = atan(uv.x, uv.y) * .275;\n                if (uv.x < 0.) a =  3.14159 - atan(-uv.x, -uv.y) * 1.66;\n            }\n\n\n            float t = mod(time*speed, duration);\n            t = exp(t * diffusionSpeed);\n            if (t>extent) t = extent;\n\n            float pattern = 0.0;\n            if(useRandomShape==1){\n                pattern = sin(baseValue+fract(.7971*floor(time*speed/2.)));\n            }else{\n                pattern = sin(baseValue);\n            }\n            float fc = magicBox(vec3(uv,a),pattern) + 1.;\n            fc = 1.-smoothstep(fc, fc+0.001, t/dot(uv,uv));\n\n\n            // \u5224\u65b7\u53cd\u5411\n            vec4 splash;\n            if(reverse==1){\n                splash = vec4(fc);\n            }else{\n                splash = vec4(1.-fc);\n            }\n\n            if(useTextureColor==1){\n                vec4 tex = texture2D(texture, v_uv0);\n                splash *=tex  * vec4(textureRColor,textureGColor,textureBColor,textureAColor);\n                gl_FragColor = vec4(splash);\n            }else{\n                splash *= vec4(shapeRColor,shapeGColor,shapeBColor,shapeAColor);\n                gl_FragColor = vec4(splash);\n            }\n        }\n\n        "
+      frag: "\n        uniform sampler2D texture;\n        uniform vec4 uvfix;\n        uniform vec2 iResolution;\n        varying vec2 v_uv0;\n\n        uniform int reverse;\n        uniform int useSymmetry;\n        uniform int useRandomShape;\n        uniform int useTextureColor;\n        uniform float leftValue;\n        uniform float rightValue;\n        uniform float baseValue;\n        uniform vec4 textureColor;\n        uniform vec4 shapeColor;\n        uniform float time;\n        uniform float speed;\n        uniform float duration;\n        uniform float diffusionSpeed;\n        uniform float extent;\n\n        // #define pattern sin(1.5)\n\n        // #define pattern sin(1.+fract(.7971*floor(iTime/2.)))\n        // #define extent 7.2\n\n        // thanks to FabriceNeyret2\n        // from dgreensp => https://www.shadertoy.com/view/4ljGDd\n\n\n\n        float magicBox(vec3 p,float pattern)\n        {\n            vec3 uvw = p;\n            p = 1.0 - abs(1. - mod(uvw, 2.0));\n            float lL = length(p), nL = lL, tot = 0.0, c = pattern;\n            for (int i=0; i < 13; i++) {\n                p = abs(p)/(lL*lL) - c;\n                nL = length(p);\n                tot += abs(nL-lL);\n                lL = nL;\n            }\n            return tot;\n        }\n\n        vec2 bigger(in vec2 uv){\n            return uvfix.xy * uv + uvfix.zw;\n        }\n\n        void main(){\n            vec2 uv = bigger(v_uv0);\n            uv.y = 1.0 - uv.y;\n            uv = uv * 5.0 - 2.5;\n\n\n\n            float a = 0.;\n            if(useSymmetry==1){\n                if (uv.x >= 0.) a = rightValue - atan(uv.x, uv.y);\n                if (uv.x < 0.) a =  leftValue - atan(-uv.x, uv.y);\n            }else{\n                if (uv.x >= 0.) a = atan(uv.x, uv.y) * .275;\n                if (uv.x < 0.) a =  3.14159 - atan(-uv.x, -uv.y) * 1.66;\n            }\n\n\n            float t = mod(time*speed, duration);\n            t = exp(t * diffusionSpeed);\n            if (t>extent) t = extent;\n\n            float pattern = 0.0;\n            if(useRandomShape==1){\n                pattern = sin(baseValue+fract(.7971*floor(time*speed/2.)));\n            }else{\n                pattern = sin(baseValue);\n            }\n            float fc = magicBox(vec3(uv,a),pattern) + 1.;\n            fc = 1.-smoothstep(fc, fc+0.001, t/dot(uv,uv));\n\n\n            // \u5224\u65b7\u53cd\u5411\n            vec4 splash;\n            if(reverse==1){\n                splash = vec4(fc);\n            }else{\n                splash = vec4(1.-fc);\n            }\n\n            if(useTextureColor==1){\n                vec4 tex = texture2D(texture, v_uv0);\n                splash *=tex  * textureColor;\n                gl_FragColor = vec4(splash);\n            }else{\n                splash *= shapeColor;\n                gl_FragColor = vec4(splash);\n            }\n        }\n\n        "
     };
     ShaderManager_1.shaderManager.addShader(shader);
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
@@ -4147,14 +4252,8 @@ window.__require = function e(t, n, r) {
         _this.reverse = false;
         _this.useRandomShape = false;
         _this.useTextureColor = false;
-        _this.textureRColor = 1;
-        _this.textureGColor = 1;
-        _this.textureBColor = 1;
-        _this.textureAColor = 1;
-        _this.shapeRColor = 1;
-        _this.shapeGColor = 1;
-        _this.shapeBColor = 1;
-        _this.shapeAColor = 1;
+        _this.textureColor = cc.color(255, 255, 255);
+        _this.shapeColor = cc.color(255, 255, 255);
         _this.duration = 2;
         _this.diffusionSpeed = 3;
         _this.extent = 7.2;
@@ -4176,14 +4275,18 @@ window.__require = function e(t, n, r) {
         material.setParamValue("leftValue", this.leftValue);
         material.setParamValue("rightValue", this.rightValue);
         material.setParamValue("baseValue", this.baseValue);
-        material.setParamValue("textureRColor", this.textureRColor);
-        material.setParamValue("textureGColor", this.textureGColor);
-        material.setParamValue("textureBColor", this.textureBColor);
-        material.setParamValue("textureAColor", this.textureAColor);
-        material.setParamValue("shapeRColor", this.shapeRColor);
-        material.setParamValue("shapeGColor", this.shapeGColor);
-        material.setParamValue("shapeBColor", this.shapeBColor);
-        material.setParamValue("shapeAColor", this.shapeAColor);
+        material.setParamValue("textureColor", {
+          x: this.textureColor.getR() / 255,
+          y: this.textureColor.getG() / 255,
+          z: this.textureColor.getB() / 255,
+          w: this.textureColor.getA() / 255
+        });
+        material.setParamValue("shapeColor", {
+          x: this.shapeColor.getR() / 255,
+          y: this.shapeColor.getG() / 255,
+          z: this.shapeColor.getB() / 255,
+          w: this.shapeColor.getA() / 255
+        });
         material.setParamValue("duration", this.duration);
         material.setParamValue("diffusionSpeed", this.diffusionSpeed);
         material.setParamValue("extent", this.extent);
@@ -4223,74 +4326,8 @@ window.__require = function e(t, n, r) {
       __decorate([ property({
         tooltip: "\u4f7f\u7528\u8cbc\u5716\u8272\u5f69"
       }) ], ShaderSplash.prototype, "useTextureColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u589e\u5f37\u8cbc\u5716R\u8272\u5f69",
-        visible: function() {
-          return this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "textureRColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u589e\u5f37\u8cbc\u5716G\u8272\u5f69",
-        visible: function() {
-          return this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "textureGColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u589e\u5f37\u8cbc\u5716B\u8272\u5f69",
-        visible: function() {
-          return this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "textureBColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u589e\u5f37\u8cbc\u5716B\u8272\u5f69",
-        visible: function() {
-          return this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "textureAColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        slide: true,
-        min: 0,
-        max: 1,
-        tooltip: "\u5716\u5f62R\u8272\u5f69",
-        visible: function() {
-          return !this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "shapeRColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u5716\u5f62G\u8272\u5f69",
-        slide: true,
-        min: 0,
-        max: 1,
-        visible: function() {
-          return !this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "shapeGColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u5716\u5f62B\u8272\u5f69",
-        slide: true,
-        min: 0,
-        max: 1,
-        visible: function() {
-          return !this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "shapeBColor", void 0);
-      __decorate([ property({
-        type: cc.Float,
-        tooltip: "\u5716\u5f62A\u8272\u5f69",
-        slide: true,
-        min: 0,
-        max: 1,
-        visible: function() {
-          return !this.useTextureColor;
-        }
-      }) ], ShaderSplash.prototype, "shapeAColor", void 0);
+      __decorate([ property(cc.Color) ], ShaderSplash.prototype, "textureColor", void 0);
+      __decorate([ property(cc.Color) ], ShaderSplash.prototype, "shapeColor", void 0);
       __decorate([ property({
         type: cc.Float,
         tooltip: "\u6301\u7e8c\u6642\u9593, 0\u8868\u793a\u6301\u7e8c\u986f\u793a"
@@ -4626,5 +4663,80 @@ window.__require = function e(t, n, r) {
     "../ShaderComponent": "ShaderComponent",
     "../ShaderFunc": "ShaderFunc",
     "../ShaderManager": "ShaderManager"
-  } ]
-}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGalaxy", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);
+  } ],
+  TouchMove: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "4a9c5e5qylPfZUAv44181NV", "TouchMove");
+    "use strict";
+    var __extends = this && this.__extends || function() {
+      var extendStatics = Object.setPrototypeOf || {
+        __proto__: []
+      } instanceof Array && function(d, b) {
+        d.__proto__ = b;
+      } || function(d, b) {
+        for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+      };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype = null === b ? Object.create(b) : (__.prototype = b.prototype, new __());
+      };
+    }();
+    var __decorate = this && this.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : null === desc ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if ("object" === typeof Reflect && "function" === typeof Reflect.decorate) r = Reflect.decorate(decorators, target, key, desc); else for (var i = decorators.length - 1; i >= 0; i--) (d = decorators[i]) && (r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r);
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var TouchMove = function(_super) {
+      __extends(TouchMove, _super);
+      function TouchMove() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.mousePos = cc.v2();
+        _this.posIP = [];
+        return _this;
+      }
+      TouchMove.prototype.onLoad = function() {
+        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart.bind(this));
+        this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove.bind(this));
+      };
+      TouchMove.prototype.onTouchStart = function(event) {
+        this.mousePos = event.getLocation();
+        this.mousePos = this.mousePos.sub(cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
+        this.node.setPosition(this.mousePos);
+        this.setPos2EditBox(this.mousePos);
+      };
+      TouchMove.prototype.onTouchMove = function(event) {
+        this.mousePos = event.getLocation();
+        this.mousePos = this.mousePos.sub(cc.v2(cc.winSize.width / 2, cc.winSize.height / 2));
+        this.node.setPosition(this.mousePos);
+        this.setPos2EditBox(this.mousePos);
+      };
+      TouchMove.prototype.onDestroy = function() {
+        this.node.targetOff(this.node);
+      };
+      TouchMove.prototype.setInputePropertyRef = function(x, y) {
+        this.posIP.push(x, y);
+      };
+      TouchMove.prototype.setPos2EditBox = function(pos) {
+        this.posIP.forEach(function(ip, index) {
+          if (ip) {
+            0 === index ? ip.editor.string = Math.floor(pos.x) + "" : 1 === index && (ip.editor.string = Math.floor(pos.y) + "");
+            var n = Number(ip.editor.string);
+            if (isNaN(n)) return;
+            ip.slider && (ip.slider.progress = (n - ip.min) / (ip.max - ip.min));
+          }
+        });
+      };
+      TouchMove = __decorate([ ccclass ], TouchMove);
+      return TouchMove;
+    }(cc.Component);
+    exports.default = TouchMove;
+    cc._RF.pop();
+  }, {} ]
+}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "TouchMove", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderEdgeGlow", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGalaxy", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);

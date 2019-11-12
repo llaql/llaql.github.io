@@ -2,20 +2,20 @@
   "__type__": "cc.SpriteFrame",
   "content": {
     "name": "1",
-    "texture": "dcPRJ09htK+YKEd/CsZX/+",
+    "texture": "f1JX8ox1dJJ6g78wdClizQ",
     "rect": [
       0,
       0,
-      1,
-      1
+      2100,
+      2100
     ],
     "offset": [
       0,
       0
     ],
     "originalSize": [
-      1,
-      1
+      2100,
+      2100
     ],
     "capInsets": [
       0,
