@@ -795,8 +795,10 @@ window.__require = function e(t, n, r) {
     Object.defineProperty(exports, "__esModule", {
       value: true
     });
+    var ShaderHook_1 = require("./ShaderHook");
     var ShaderManager_1 = require("./ShaderManager");
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property, playOnFocus = _a.playOnFocus, executeInEditMode = _a.executeInEditMode;
+    ShaderHook_1.hookReference;
     var CLEAR_COLOR;
     (function(CLEAR_COLOR) {
       CLEAR_COLOR[CLEAR_COLOR["CLEAR_COLOR"] = 0] = "CLEAR_COLOR";
@@ -917,6 +919,7 @@ window.__require = function e(t, n, r) {
     exports.default = ShaderComponent;
     cc._RF.pop();
   }, {
+    "./ShaderHook": "ShaderHook",
     "./ShaderManager": "ShaderManager"
   } ],
   ShaderDemo: [ function(require, module, exports) {
@@ -2658,6 +2661,7 @@ window.__require = function e(t, n, r) {
     Object.defineProperty(exports, "__esModule", {
       value: true
     });
+    var MVP_1 = require("../MVP");
     var ShaderComponent_1 = require("../ShaderComponent");
     var ShaderFunc_1 = require("../ShaderFunc");
     var ShaderManager_1 = require("../ShaderManager");
@@ -2670,10 +2674,19 @@ window.__require = function e(t, n, r) {
       }, {
         name: "speed",
         type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "width",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "strength",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "offset",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
       } ],
       defines: [],
-      vert: "\n        #define useModel\n        #define use2DPos\n        precision highp float;\n\n\n        uniform mat4 viewProj;\n\n        #ifdef use2DPos\n        attribute vec2 a_position;\n        #else\n        attribute vec3 a_position;\n        #endif\n\n        attribute lowp vec4 a_color;\n        #ifdef useTint\n        attribute lowp vec4 a_color0;\n        #endif\n\n        #ifdef useModel\n        uniform mat4 model;\n        #endif\n\n        attribute mediump vec2 a_uv0;\n        varying mediump vec2 v_uv0;\n\n        varying lowp vec4 v_light;\n        #ifdef useTint\n        varying lowp vec4 v_dark;\n        #endif\n\n        void main () {\n            mat4 mvp;\n            #ifdef useModel\n              mvp = viewProj * model;\n            #else\n              mvp = viewProj;\n            #endif\n\n            #ifdef use2DPos\n            vec4 pos = mvp * vec4(a_position, 0, 1);\n            #else\n            vec4 pos = mvp * vec4(a_position, 1);\n            #endif\n\n            v_light = a_color;\n            #ifdef useTint\n              v_dark = a_color0;\n            #endif\n\n            v_uv0 = a_uv0;\n\n            gl_Position = pos;\n        }",
-      frag: "\n        #define useModel\n        #define use2DPos\n        precision highp float;\n\n\n        uniform sampler2D texture;\n        varying mediump vec2 v_uv0;\n\n        #ifdef alphaTest\n          uniform lowp float alphaThreshold;\n        #endif\n\n        varying lowp vec4 v_light;\n        #ifdef useTint\n          varying lowp vec4 v_dark;\n        #endif\n        uniform float time;\n        uniform float speed;\n\n        void main()\n        {\n            vec4 texColor = texture2D(texture, v_uv0);\n            vec4 finalColor;\n\n            #ifdef useTint\n              finalColor.a = v_light.a * texColor.a;\n              finalColor.rgb = ((texColor.a - 1.0) * v_dark.a + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;\n            #else\n              finalColor = texColor * v_light;\n            #endif\n\n            #ifdef alphaTest\n              if (finalColor.a <= alphaThreshold)\n                discard;\n            #endif\n\n            float width = 0.03;       //\u6d41\u5149\u7684\u5bbd\u5ea6\u8303\u56f4 (\u8c03\u6574\u8be5\u503c\u6539\u53d8\u6d41\u5149\u7684\u5bbd\u5ea6)\n            float start = tan(mod(time*speed,1.414)/1.414);  //\u6d41\u5149\u7684\u8d77\u59cbx\u5750\u6807\n            float strength = 0.05;   //\u6d41\u5149\u589e\u4eae\u5f3a\u5ea6   (\u8c03\u6574\u8be5\u503c\u6539\u53d8\u6d41\u5149\u7684\u589e\u4eae\u5f3a\u5ea6)\n            float offset = 0.5;      //\u504f\u79fb\u503c         (\u8c03\u6574\u8be5\u503c\u6539\u53d8\u6d41\u5149\u7684\u503e\u659c\u7a0b\u5ea6)\n            if(v_uv0.x < (start - offset * v_uv0.y) &&  v_uv0.x > (start - offset * v_uv0.y - width))\n            {\n                vec3 improve = strength * vec3(255, 255, 255);\n                vec3 result = improve * vec3( finalColor.r, finalColor.g, finalColor.b);\n                gl_FragColor = vec4(result, finalColor.a);\n\n            }else{\n                gl_FragColor = finalColor;\n            }\n        }"
+      vert: MVP_1.MVP,
+      frag: "\n        #define useModel\n        #define use2DPos\n        precision highp float;\n\n\n        uniform sampler2D texture;\n        varying mediump vec2 v_uv0;\n\n        #ifdef alphaTest\n          uniform lowp float alphaThreshold;\n        #endif\n\n        varying lowp vec4 v_light;\n        #ifdef useTint\n          varying lowp vec4 v_dark;\n        #endif\n        uniform float time;\n        uniform float speed;\n        uniform float width;\n        uniform float strength;\n        uniform float offset;\n\n        void main()\n        {\n            vec4 texColor = texture2D(texture, v_uv0);\n            vec4 finalColor;\n\n            #ifdef useTint\n              finalColor.a = v_light.a * texColor.a;\n              finalColor.rgb = ((texColor.a - 1.0) * v_dark.a + 1.0 - texColor.rgb) * v_dark.rgb + texColor.rgb * v_light.rgb;\n            #else\n              finalColor = texColor * v_light;\n            #endif\n\n            #ifdef alphaTest\n              if (finalColor.a <= alphaThreshold)\n                discard;\n            #endif\n\n            float start = tan(mod(time*speed,1.414)/1.);  //\u6d41\u5149\u7684\u8d77\u59cbx\u5750\u6807\n            if(v_uv0.x < (start - offset * v_uv0.y) &&  v_uv0.x > (start - offset * v_uv0.y - width))\n            {\n                vec3 improve = strength * vec3(255, 255, 255);\n                vec3 result = improve * vec3( finalColor.r, finalColor.g, finalColor.b);\n                gl_FragColor = vec4(result, finalColor.a);\n\n            }else{\n                gl_FragColor = finalColor;\n            }\n        }"
     };
     ShaderManager_1.shaderManager.addShader(shader);
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
@@ -2684,24 +2697,34 @@ window.__require = function e(t, n, r) {
         _this.shaderFunc = shader;
         _this.time = 0;
         _this.speed = 1;
+        _this.width = .2;
+        _this.strength = .5;
+        _this.offset = .5;
         return _this;
       }
       ShaderFluxay.prototype.doStart = function(sprite, material, dt) {
         this.time = 0;
         material.setParamValue("time", this.time);
         material.setParamValue("speed", this.speed);
+        material.setParamValue("width", this.width);
+        material.setParamValue("strength", this.strength);
+        material.setParamValue("offset", this.offset);
       };
       ShaderFluxay.prototype.doUpdate = function(sprite, material, dt) {
         this.time += dt;
         material.setParamValue("time", this.time);
       };
       __decorate([ property(cc.Float) ], ShaderFluxay.prototype, "speed", void 0);
+      __decorate([ property(cc.Float) ], ShaderFluxay.prototype, "width", void 0);
+      __decorate([ property(cc.Float) ], ShaderFluxay.prototype, "strength", void 0);
+      __decorate([ property(cc.Float) ], ShaderFluxay.prototype, "offset", void 0);
       ShaderFluxay = __decorate([ ccclass ], ShaderFluxay);
       return ShaderFluxay;
     }(ShaderComponent_1.default);
     exports.default = ShaderFluxay;
     cc._RF.pop();
   }, {
+    "../MVP": "MVP",
     "../ShaderComponent": "ShaderComponent",
     "../ShaderFunc": "ShaderFunc",
     "../ShaderManager": "ShaderManager"
@@ -3124,6 +3147,7 @@ window.__require = function e(t, n, r) {
         this.markForRender(true);
       }
     };
+    exports.hookReference = true;
     cc._RF.pop();
   }, {} ],
   ShaderInterstellar: [ function(require, module, exports) {
