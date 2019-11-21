@@ -988,8 +988,9 @@ window.__require = function e(t, n, r) {
       SHADER_LIST[SHADER_LIST["ShaderRipple"] = 29] = "ShaderRipple";
       SHADER_LIST[SHADER_LIST["ShaderGalaxy"] = 30] = "ShaderGalaxy";
       SHADER_LIST[SHADER_LIST["ShaderEdgeGlow"] = 31] = "ShaderEdgeGlow";
+      SHADER_LIST[SHADER_LIST["ShaderRunCircle"] = 32] = "ShaderRunCircle";
     })(SHADER_LIST = exports.SHADER_LIST || (exports.SHADER_LIST = {}));
-    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy", "ShaderEdgeGlow" ];
+    var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy", "ShaderEdgeGlow", "ShaderRunCircle" ];
     var BLEND_FACTOR = [ cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
     var ShaderDemo = function(_super) {
       __extends(ShaderDemo, _super);
@@ -1001,6 +1002,7 @@ window.__require = function e(t, n, r) {
         _this.currentShaderComponent = null;
         _this.tempButton = null;
         _this.content = null;
+        _this.maskSpriteFrame = null;
         _this.mainSpriteFrame = null;
         _this.shaderNameLabel = null;
         _this.textureMap = new Map();
@@ -1028,6 +1030,7 @@ window.__require = function e(t, n, r) {
             var data = resources.sort(function(a, b) {
               return Number(a.name) - Number(b.name);
             });
+            0 === data.length && (data[0] = _this.maskSpriteFrame);
             _this.textureMap.set(SHADER_NAME[index], data);
             _this.complete += 1;
           });
@@ -1371,6 +1374,7 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Node) ], ShaderDemo.prototype, "spriteTemplate", void 0);
       __decorate([ property(cc.Button) ], ShaderDemo.prototype, "tempButton", void 0);
       __decorate([ property(cc.Node) ], ShaderDemo.prototype, "content", void 0);
+      __decorate([ property(cc.SpriteFrame) ], ShaderDemo.prototype, "maskSpriteFrame", void 0);
       __decorate([ property(cc.SpriteFrame) ], ShaderDemo.prototype, "mainSpriteFrame", void 0);
       __decorate([ property(cc.Label) ], ShaderDemo.prototype, "shaderNameLabel", void 0);
       __decorate([ property(cc.Node) ], ShaderDemo.prototype, "mask", void 0);
@@ -3766,6 +3770,153 @@ window.__require = function e(t, n, r) {
     "../ShaderFunc": "ShaderFunc",
     "../ShaderManager": "ShaderManager"
   } ],
+  ShaderRunCircle: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "a896dvqI+dPRoK3hanH96di", "ShaderRunCircle");
+    "use strict";
+    var __extends = this && this.__extends || function() {
+      var extendStatics = Object.setPrototypeOf || {
+        __proto__: []
+      } instanceof Array && function(d, b) {
+        d.__proto__ = b;
+      } || function(d, b) {
+        for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+      };
+      return function(d, b) {
+        extendStatics(d, b);
+        function __() {
+          this.constructor = d;
+        }
+        d.prototype = null === b ? Object.create(b) : (__.prototype = b.prototype, new __());
+      };
+    }();
+    var __decorate = this && this.__decorate || function(decorators, target, key, desc) {
+      var c = arguments.length, r = c < 3 ? target : null === desc ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+      if ("object" === typeof Reflect && "function" === typeof Reflect.decorate) r = Reflect.decorate(decorators, target, key, desc); else for (var i = decorators.length - 1; i >= 0; i--) (d = decorators[i]) && (r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r);
+      return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var MVP_1 = require("../MVP");
+    var ShaderComponent_1 = require("../ShaderComponent");
+    var ShaderFunc_1 = require("../ShaderFunc");
+    var ShaderManager_1 = require("../ShaderManager");
+    var shader = {
+      name: "ShaderRunCircle",
+      params: [ {
+        name: "resolution",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT2
+      }, {
+        name: "time",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "speed",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "intensity",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT
+      }, {
+        name: "radius",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 0,
+        max: 100
+      }, {
+        name: "size",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: 0,
+        max: 500
+      }, {
+        name: "size1",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT,
+        min: -100,
+        max: 100
+      }, {
+        name: "glowColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_FLOAT4,
+        paramType: ShaderFunc_1.PARAM_TYPES.COLOR
+      }, {
+        name: "clearColor",
+        type: ShaderFunc_1.RENDERER_PARAMS.PARAM_INT,
+        min: 0,
+        max: 7
+      } ],
+      vert: MVP_1.MVP,
+      frag: "\n        varying vec2 v_uv0;\n        uniform vec4 uvfix;\n        uniform float time;\n        uniform float speed;\n        uniform float intensity;\n        uniform float radius;\n        uniform float size;\n        uniform float size1;\n        uniform vec4 glowColor;\n        uniform int clearColor;\n        vec2 bigger(in vec2 uv){\n            return (uvfix.xy - uvfix.zw) * uv;\n        }\n        void main()\n        {\n            vec2 uv = bigger(v_uv0);\n\t\t\tuv.y = 1.-uv.y;\n            vec2 sunXY;\n\n            sunXY.x = .5 + .5 * sin(2.0 * 3.14 / 24.0 * time*speed)*radius/100.;\n            sunXY.y = .5 + .5 * cos(2.0 * 3.14 / 24.0 * time*speed)*radius/100.;\n\n\n            vec4 sunColor = vec4(0.0, 0.0, 0.0, 1.0);\n\n            float dSun = sin(3.14 / (distance(sunXY*size, uv.xy*size) + size1)) * intensity;\n\n            vec4 tempColor = glowColor*dSun;\n            float alpha = 0.;\n            if(clearColor == 1){\n                alpha = tempColor.r;\n            } else if(clearColor == 2){\n                alpha = tempColor.g;\n            } else if(clearColor == 3){\n                alpha = tempColor.b;\n            } else if(clearColor == 4){\n                alpha = tempColor.r*tempColor.g;\n            } else if(clearColor == 5){\n                alpha = tempColor.r*tempColor.b;\n            } else if(clearColor == 6){\n                alpha = tempColor.g*tempColor.b;\n            } else if(clearColor == 7){\n                alpha = tempColor.r*tempColor.g*tempColor.b;\n            }\n            alpha *= tempColor.a;\n            gl_FragColor = vec4(tempColor.rgb,alpha);\n        }\n        "
+    };
+    ShaderManager_1.shaderManager.addShader(shader);
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var ShaderRunCircle = function(_super) {
+      __extends(ShaderRunCircle, _super);
+      function ShaderRunCircle() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.shaderFunc = shader;
+        _this.time = 0;
+        _this.speed = .5;
+        _this.intensity = 5;
+        _this.radius = 60;
+        _this.size = 90;
+        _this.size1 = 5;
+        _this.glowColor = cc.color(51, 153, 255, 255);
+        _this.clearColor = 1;
+        return _this;
+      }
+      ShaderRunCircle.prototype.doStart = function(sprite, material, dt) {
+        this.time = 0;
+        var resolution = sprite.node.getContentSize();
+        material.setParamValue("resolution", resolution);
+        material.setParamValue("time", this.time);
+        material.setParamValue("speed", this.speed);
+        material.setParamValue("intensity", this.intensity);
+        material.setParamValue("radius", this.radius);
+        material.setParamValue("size", this.size);
+        material.setParamValue("size1", this.size1);
+        material.setParamValue("clearColor", this.clearColor);
+        material.setParamValue("glowColor", {
+          x: this.glowColor.getR() / 255,
+          y: this.glowColor.getG() / 255,
+          z: this.glowColor.getB() / 255,
+          w: this.glowColor.getA() / 255
+        });
+      };
+      ShaderRunCircle.prototype.doUpdate = function(sprite, material, dt) {
+        this.time += dt;
+        material.setParamValue("time", this.time);
+      };
+      __decorate([ property({
+        type: cc.Float,
+        tooltip: "\u8d8a\u5c0f\u8d8a\u6162"
+      }) ], ShaderRunCircle.prototype, "speed", void 0);
+      __decorate([ property({
+        type: cc.Float,
+        min: .01
+      }) ], ShaderRunCircle.prototype, "intensity", void 0);
+      __decorate([ property({
+        type: cc.Float,
+        min: 0,
+        max: 500
+      }) ], ShaderRunCircle.prototype, "radius", void 0);
+      __decorate([ property({
+        type: cc.Float
+      }) ], ShaderRunCircle.prototype, "size", void 0);
+      __decorate([ property({
+        type: cc.Float
+      }) ], ShaderRunCircle.prototype, "size1", void 0);
+      __decorate([ property(cc.color) ], ShaderRunCircle.prototype, "glowColor", void 0);
+      __decorate([ property({
+        type: cc.Enum(ShaderComponent_1.CLEAR_COLOR)
+      }) ], ShaderRunCircle.prototype, "clearColor", void 0);
+      ShaderRunCircle = __decorate([ ccclass ], ShaderRunCircle);
+      return ShaderRunCircle;
+    }(ShaderComponent_1.default);
+    exports.default = ShaderRunCircle;
+    cc._RF.pop();
+  }, {
+    "../MVP": "MVP",
+    "../ShaderComponent": "ShaderComponent",
+    "../ShaderFunc": "ShaderFunc",
+    "../ShaderManager": "ShaderManager"
+  } ],
   ShaderRun: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "5ed45tX1GVN7JYDizxOKWaq", "ShaderRun");
@@ -4763,4 +4914,4 @@ window.__require = function e(t, n, r) {
     exports.default = TouchMove;
     cc._RF.pop();
   }, {} ]
-}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "TouchMove", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderEdgeGlow", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGalaxy", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);
+}, {}, [ "FileDrop", "InputeProperty", "InputePropertys", "ShaderDemo", "TouchMove", "MVP", "ShaderComponent", "ShaderFunc", "ShaderHook", "ShaderManager", "ShaderMaterial", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderEdgeGlow", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGalaxy", "ShaderGaussBlur", "ShaderGrassy", "ShaderInterstellar", "ShaderRipple", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderRunCircle", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave" ]);

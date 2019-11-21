@@ -209,6 +209,9 @@
           "content": {
             "__id__": 15
           },
+          "maskSpriteFrame": {
+            "__uuid__": "1efPeY+QlEqI0On6SBk2Ux"
+          },
           "shaderNameLabel": {
             "__id__": 138
           },
@@ -4219,8 +4222,8 @@
             "__id__": 134
           },
           "_useOriginalSize": false,
-          "_string": "v0.1.7\n把圖拖至畫面上 1~2張圖\n1.為主要貼圖可為一般圖或noise\n2.必為noise\n3.丟入檔名為bg的png or jpg可以更換背景",
-          "_N$string": "v0.1.7\n把圖拖至畫面上 1~2張圖\n1.為主要貼圖可為一般圖或noise\n2.必為noise\n3.丟入檔名為bg的png or jpg可以更換背景",
+          "_string": "v0.1.8\n把圖拖至畫面上 1~2張圖\n1.為主要貼圖可為一般圖或noise\n2.必為noise\n3.丟入檔名為bg的png or jpg可以更換背景",
+          "_N$string": "v0.1.8\n把圖拖至畫面上 1~2張圖\n1.為主要貼圖可為一般圖或noise\n2.必為noise\n3.丟入檔名為bg的png or jpg可以更換背景",
           "_N$verticalAlign": 1,
           "_N$overflow": 2
         },
