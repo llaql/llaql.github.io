@@ -135,8 +135,8 @@
       },
       "_scale": {
         "__type__": "cc.Vec3",
-        "x": 0.36825693994638825,
-        "y": 0.36825693994638825,
+        "x": 0.3697916666666667,
+        "y": 0.3697916666666667,
         "z": 1
       },
       "autoReleaseAssets": false
@@ -4264,8 +4264,8 @@
             "__id__": 135
           },
           "_useOriginalSize": false,
-          "_string": "BlendFactor\nONE=0\nZERO=1\nSRC_ALPHA=2\nSRC_COLOR=3\nDST_ALPHA=4\nDST_COLOR=5\nONE_MINUS_SRC_ALPHA=6\nONE_MINUS_SRC_COLOR=7\nONE_MINUS_DST_ALPHA=8\nONE_MINUS_DST_COLOR=9",
-          "_N$string": "BlendFactor\nONE=0\nZERO=1\nSRC_ALPHA=2\nSRC_COLOR=3\nDST_ALPHA=4\nDST_COLOR=5\nONE_MINUS_SRC_ALPHA=6\nONE_MINUS_SRC_COLOR=7\nONE_MINUS_DST_ALPHA=8\nONE_MINUS_DST_COLOR=9",
+          "_string": "BlendFactor\nZERO=0\nONE=1\nSRC_COLOR=2\nONE_MINUS_SRC_COLOR=3\nSRC_ALPHA=4\nONE_MINUS_SRC_ALPHA=5\nDST_ALPHA=6\nONE_MINUS_DST_ALPHA=7\nDST_COLOR=8\nONE_MINUS_DST_COLOR=9",
+          "_N$string": "BlendFactor\nZERO=0\nONE=1\nSRC_COLOR=2\nONE_MINUS_SRC_COLOR=3\nSRC_ALPHA=4\nONE_MINUS_SRC_ALPHA=5\nDST_ALPHA=6\nONE_MINUS_DST_ALPHA=7\nDST_COLOR=8\nONE_MINUS_DST_COLOR=9",
           "_N$horizontalAlign": 2,
           "_N$verticalAlign": 1,
           "_N$overflow": 2

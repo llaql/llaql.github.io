@@ -991,7 +991,7 @@ window.__require = function e(t, n, r) {
       SHADER_LIST[SHADER_LIST["ShaderRunCircle"] = 32] = "ShaderRunCircle";
     })(SHADER_LIST = exports.SHADER_LIST || (exports.SHADER_LIST = {}));
     var SHADER_NAME = [ "Default", "ShaderAclouisCircle", "ShaderBallOfFire", "ShaderClouds", "ShaderDissolve2", "ShaderElectricGrid", "ShaderExplosion", "ShaderFire", "ShaderFlame301Remix2", "ShaderFlame301Remix3", "ShaderFlameAvin", "ShaderFlameBrady", "ShaderFlameOzzy", "ShaderFlameWADE", "ShaderFluxay", "ShaderFluxay2", "ShaderGrassy", "ShaderInterstellar", "ShaderRun", "ShaderRun2", "ShaderRun3", "ShaderSearch", "ShaderSparks", "ShaderSparksDrifting", "ShaderSplash", "ShaderWater", "ShaderWater2", "ShaderWave", "ShaderGaussBlur", "ShaderRipple", "ShaderGalaxy", "ShaderEdgeGlow", "ShaderRunCircle" ];
-    var BLEND_FACTOR = [ cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
+    var BLEND_FACTOR = [ cc.macro.BlendFactor.ZERO, cc.macro.BlendFactor.ONE, cc.macro.BlendFactor.SRC_COLOR, cc.macro.BlendFactor.ONE_MINUS_SRC_COLOR, cc.macro.BlendFactor.SRC_ALPHA, cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA, cc.macro.BlendFactor.DST_ALPHA, cc.macro.BlendFactor.ONE_MINUS_DST_ALPHA, cc.macro.BlendFactor.DST_COLOR, cc.macro.BlendFactor.ONE_MINUS_DST_COLOR ];
     var ShaderDemo = function(_super) {
       __extends(ShaderDemo, _super);
       function ShaderDemo() {
@@ -1330,8 +1330,6 @@ window.__require = function e(t, n, r) {
           }
         });
         var s = this.oldSpriteNode.getComponent(cc.Sprite);
-        s.srcBlendFactor = cc.macro.BlendFactor.SRC_ALPHA;
-        s.dstBlendFactor = cc.macro.BlendFactor.ONE_MINUS_SRC_ALPHA;
         obj.push({
           name: "SpriteSkew",
           value: {
